@@ -1,0 +1,20 @@
+.about {
+  position: relative;
+  overflow: hidden;
+  height: auto;
+}
+
+.about::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url("../../assets/1.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  filter: blur(2px);
+  opacity: 0.8;
+  z-index: -1;
+}
