@@ -1,0 +1,73 @@
+.gallerySection {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+.galleryList {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  width: 355px;
+  gap: 5px;
+}
+.galleryItem {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: calc((355px - 3 * 5px) / 4);
+}
+.galleryItem img {
+  width: 85px;
+  height: 100px;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 10px;
+  border: rgb(207, 228, 230) 2px solid;
+  cursor: pointer;
+}
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.modalContent {
+  position: relative;
+  border-radius: 15px;
+}
+.modalImage {
+  max-width: 100%;
+  max-height: 80vh;
+  border-radius: 15px;
+}
+@media screen and (min-width: 768px) {
+  .galleryList {
+    width: 748px;
+  }
+  .galleryItem {
+    width: calc((748px - 3 * 10px) / 4);
+  }
+  .galleryItem img {
+    width: 170px;
+  }
+}
+@media screen and (min-width: 1440px) {
+  .galleryList {
+    width: 1420px;
+  }
+  .galleryItem {
+    width: calc((1420px - 2 * 20px) / 6);
+  }
+  .galleryItem img {
+    width: 340px;
+    height: 170px;
+  }
+}

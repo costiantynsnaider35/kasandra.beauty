@@ -1,7 +1,8 @@
-import CommentSection from "../../components/CommentSection/CommentSection";
-import ContactSection from "../../components/ContactSection/ContactSection";
+// import CommentSection from "../../components/CommentSection/CommentSection";
+// import ContactSection from "../../components/ContactSection/ContactSection";
 import GallerySection from "../../components/GallerySection/GallerySection";
 import InfoSection from "../../components/InfoSection/InfoSection";
+// import PriceSection from "../../components/PriceSection/PriceSection";
 import s from "./AboutMe.module.css";
 
 const AboutMe = () => {
@@ -9,8 +10,9 @@ const AboutMe = () => {
     <div className={s.about}>
       <InfoSection />
       <GallerySection />
-      <CommentSection />
-      <ContactSection />
+      {/* <PriceSection /> */}
+      {/* <CommentSection /> */}
+      {/* <ContactSection /> */}
     </div>
   );
 };
