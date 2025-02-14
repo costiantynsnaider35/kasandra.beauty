@@ -4,8 +4,8 @@
   align-items: center;
   justify-content: center;
   gap: 5px;
-  width: auto;
-  height: auto;
+  width: 375px;
+  padding: 15px;
 }
 
 .infoTitle {
@@ -31,12 +31,12 @@
 
 .infoText ul {
   list-style-type: disc;
-  padding-left: 20px;
+  padding-left: 25px;
   word-spacing: -2px;
 }
 @media screen and (min-width: 768px) {
   .infoSection {
-    padding: 20px;
+    width: 768px;
     gap: 10px;
   }
   .infoTitle {
@@ -52,7 +52,7 @@
 
 @media screen and (min-width: 1440px) {
   .infoSection {
-    padding: 30px;
+    width: 1440px;
     gap: 15px;
   }
   .infoTitle {
@@ -63,5 +63,8 @@
   .infoText {
     font-size: 40px;
     line-height: 30px;
+  }
+  .infoText ul {
+    padding-left: 35px;
   }
 }

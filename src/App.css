@@ -1,15 +1,15 @@
 .app {
-  width: 375px;
+  min-width: 375px;
 }
 
 @media screen and (min-width: 768px) {
   .app {
-    width: 768px;
+    min-width: 768px;
   }
 }
 
 @media screen and (min-width: 1440px) {
   .app {
-    width: 1440px;
+    min-width: 1440px;
   }
 }
