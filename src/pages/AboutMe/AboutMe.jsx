@@ -1,18 +1,34 @@
-// import CommentSection from "../../components/CommentSection/CommentSection";
-// import ContactSection from "../../components/ContactSection/ContactSection";
-import GallerySection from "../../components/GallerySection/GallerySection";
-import InfoSection from "../../components/InfoSection/InfoSection";
-// import PriceSection from "../../components/PriceSection/PriceSection";
 import s from "./AboutMe.module.css";
 
 const AboutMe = () => {
   return (
     <div className={s.about}>
-      <InfoSection />
-      <GallerySection />
-      {/* <PriceSection /> */}
-      {/* <CommentSection /> */}
-      {/* <ContactSection /> */}
+      <img
+        className={s.aboutImg}
+        src="/src/assets/img/photo_2025-02-15_20-00-57 (1).jpg"
+        alt="me photo"
+      />
+      <div className={s.aboutText}>
+        <p>
+          Вітаю! Мене звати Карпова Оксана, і я професіонал у сфері краси з
+          понад 5-річним досвідом. Я спеціалізуюся на манікюрі, педикюрі та
+          догляді за бровами, і завжди прагну дарувати своїм клієнтам ідеальний
+          вигляд та впевненість у собі.
+        </p>
+        <p>Послуги, які я пропоную:</p>
+        <ul>
+          <li>
+            Манікюр: класичний, френч, нарощування та різноманітні дизайни.
+          </li>
+          <li>Педикюр: комбінований та з основами подології.</li>
+          <li>Брови: корекція воском та фарбування.</li>
+        </ul>
+        <p>
+          Кожна деталь для мене важлива, тому я завжди роблю акцент на
+          креативності та якості. Запрошую вас відчути красу та професіоналізм
+          на власному досвіді!
+        </p>
+      </div>
     </div>
   );
 };

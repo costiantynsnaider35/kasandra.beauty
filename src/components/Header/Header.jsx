@@ -1,7 +1,6 @@
 import clsx from "clsx";
 import { NavLink } from "react-router-dom";
 import s from "./Header.module.css";
-import Logo from "../Logo/Logo";
 
 const Header = () => {
   const buildLinkClass = ({ isActive }) => {
@@ -10,12 +9,17 @@ const Header = () => {
 
   return (
     <div className={s.header}>
-      <Logo />
-      <NavLink className={buildLinkClass} to="/">
+      <NavLink className={buildLinkClass} to="/about">
         Про мене
       </NavLink>
-      <NavLink className={buildLinkClass} to="/booking">
-        Записатись
+      <NavLink className={buildLinkClass} to="/gallery">
+        Мої роботи
+      </NavLink>
+      <NavLink className={buildLinkClass} to="/price">
+        Прайс
+      </NavLink>
+      <NavLink className={buildLinkClass} to="/contacts">
+        Контакти
       </NavLink>
     </div>
   );

@@ -3,43 +3,24 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: space-between;
-  padding: 5px 10px;
+  justify-content: space-around;
+  padding: 5px;
   height: 60px;
-  width: 100%;
 }
 
 .link {
   color: black;
   text-decoration: none;
-  font-size: 30px;
-  font-weight: 600;
-  line-height: 32px;
+  font-size: 23px;
+  font-weight: 700;
+  line-height: 10px;
+  letter-spacing: -1px;
   transition: color 350ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 .activeLink {
-  color: rgb(0, 94, 255);
-  font-weight: bold;
+  color: #005eff;
+  font-size: 25px;
 }
 .activeLink:hover {
-  color: rgb(0, 94, 255);
-}
-@media screen and (min-width: 768px) {
-  .header {
-    padding: 5px 20px;
-  }
-
-  .link {
-    font-size: 45px;
-  }
-}
-
-@media screen and (min-width: 1440px) {
-  .header {
-    padding: 5px 30px;
-    height: 90px;
-  }
-  .link {
-    font-size: 60px;
-  }
+  color: #005eff;
 }

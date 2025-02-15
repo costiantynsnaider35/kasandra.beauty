@@ -1,12 +1,13 @@
 import { Routes, Route } from "react-router-dom";
 import AboutMe from "./pages/AboutMe/AboutMe";
-import Booking from "./pages/Booking/Booking";
-import DaySchedule from "./pages/DaySchedule/DaySchedule";
-import Adminpanel from "./pages/AdminPanel/Adminpanel";
 import Header from "./components/Header/Header";
 import "./App.css";
 import Loader from "./components/Loader/Loader";
 import { Suspense } from "react";
+import HomePage from "./pages/HomePage/HomePage";
+import GalleryPage from "./pages/GalleryPage/GalleryPage";
+import PricePage from "./pages/PricePage/PricePage";
+import ContactsPage from "./pages/ContactsPage/ContactsPage";
 
 function App() {
   return (
@@ -14,10 +15,11 @@ function App() {
       <Header />
       <Suspense fallback={<Loader />}>
         <Routes>
-          <Route path="/" element={<AboutMe />} />
-          <Route path="/booking" element={<Booking />} />
-          <Route path="/schedule/:date" element={<DaySchedule />} />
-          <Route path="/admin" element={<Adminpanel />} />
+          <Route path="/" element={<HomePage />} />
+          <Route path="/about" element={<AboutMe />} />
+          <Route path="/gallery" element={<GalleryPage />} />
+          <Route path="/price" element={<PricePage />} />
+          <Route path="/contacts" element={<ContactsPage />} />
         </Routes>
       </Suspense>
     </div>

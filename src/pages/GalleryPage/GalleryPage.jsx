@@ -1,10 +1,10 @@
 import { useState } from "react";
 import Modal from "react-modal";
-import s from "./GallerySection.module.css";
+import s from "./GalleryPage.module.css";
 
 Modal.setAppElement("#root");
 
-const GallerySection = () => {
+const GalleryPage = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [currentImgSrc, setCurrentImgSrc] = useState("");
 
@@ -19,7 +19,7 @@ const GallerySection = () => {
   };
 
   return (
-    <div className={s.gallerySection}>
+    <div className={s.galleryPage}>
       <ul className={s.galleryList}>
         {[...Array(12).keys()].map((index) => (
           <li key={index} className={s.galleryItem}>
@@ -49,4 +49,4 @@ const GallerySection = () => {
   );
 };
 
-export default GallerySection;
+export default GalleryPage;
