@@ -1,0 +1,37 @@
+.homePage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.homeTitle {
+  font-size: 32px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  text-transform: uppercase;
+  font-weight: bold;
+}
+.homeTitle span {
+  font-family: "Dancing Script", cursive;
+  font-size: 52px;
+  color: #008000;
+}
+.homeFancy1 {
+  position: absolute;
+  top: 5px;
+  left: 55px;
+}
+.homeFancy2 {
+  position: absolute;
+  top: 40px;
+  right: 55px;
+}
+
+.homeInfo {
+  position: absolute;
+  font-size: 23px;
+  font-weight: bold;
+  top: 100px;
+  left: 5px;
+}

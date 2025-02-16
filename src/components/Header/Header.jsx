@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import { NavLink } from "react-router-dom";
 import s from "./Header.module.css";
+import { IoIosHome } from "react-icons/io";
 
 const Header = () => {
   const buildLinkClass = ({ isActive }) => {
@@ -9,6 +10,9 @@ const Header = () => {
 
   return (
     <div className={s.header}>
+      <NavLink className={buildLinkClass} to="/">
+        <IoIosHome width={23} height={23} />
+      </NavLink>
       <NavLink className={buildLinkClass} to="/about">
         Про мене
       </NavLink>

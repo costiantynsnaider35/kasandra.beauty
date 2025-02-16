@@ -5,7 +5,7 @@
   align-items: center;
   justify-content: space-around;
   padding: 5px;
-  height: 60px;
+  height: 40px;
 }
 
 .link {
@@ -19,7 +19,6 @@
 }
 .activeLink {
   color: #005eff;
-  font-size: 25px;
 }
 .activeLink:hover {
   color: #005eff;
