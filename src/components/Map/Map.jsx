@@ -30,7 +30,7 @@ const Map = () => {
       }
 
       const script = document.createElement("script");
-      script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyCAeK5rcBfXtzrx58uHodpH36RNly0szmM&callback=initMap&libraries=marker&loading=async`;
+      script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyCzQuHAtIPNREARrqLyWvtdJSzdPFWELyA&callback=initMap&libraries=marker&loading=async`;
       script.async = true;
       script.defer = true;
       document.head.appendChild(script);

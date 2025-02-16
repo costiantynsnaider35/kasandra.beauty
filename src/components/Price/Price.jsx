@@ -11,7 +11,7 @@ const Price = () => {
   const services = [
     {
       title: "Манікюр",
-      image: "/src/assets/img/man.jpg",
+      image: "/assets/img/man.jpg",
       items: [
         { description: "з покриттям", price: "700грн" },
         { description: "без покриття", price: "350грн" },
@@ -29,7 +29,7 @@ const Price = () => {
     },
     {
       title: "Педикюр",
-      image: "/src/assets/img/ped.jpg",
+      image: "/assets/img/ped.jpg",
       items: [
         { description: "звичайний", price: "750грн" },
         { description: "чищення", price: "450грн" },
@@ -39,7 +39,7 @@ const Price = () => {
     },
     {
       title: "Брови",
-      image: "/src/assets/img/br.jpg",
+      image: "/assets/img/br.jpg",
       items: [
         { description: "корекція воском", price: "250грн" },
         { description: "корекція з фарбуванням", price: "400грн" },

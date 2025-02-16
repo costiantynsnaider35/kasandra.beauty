@@ -24,7 +24,7 @@ const Gallery = () => {
         {[...Array(12).keys()].map((index) => (
           <li key={index} className={s.galleryItem}>
             <img
-              src={`/src/assets/img/n${index + 1}.jpg`}
+              src={`/assets/img/n${index + 1}.jpg`}
               alt={`nails${index + 1}`}
               onClick={() => openModal(`/src/assets/img/n${index + 1}.jpg`)}
             />
