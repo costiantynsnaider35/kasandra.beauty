@@ -1,0 +1,68 @@
+.contacts {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  gap: 5px;
+  padding: 10px;
+}
+
+.contacts::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url("../../assets/img/1.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
+  filter: blur(2px);
+  opacity: 0.5;
+  z-index: -1;
+}
+.contactsAddress {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+.contactsTitle {
+  font-size: 32px;
+  font-weight: 700;
+}
+.contactsItem {
+  font-size: 20px;
+  font-weight: 500;
+}
+.contactsSocial {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+.contactsList {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 15px;
+}
+.contactsIcon {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+.icon {
+  width: 48px;
+  height: 48px;
+}
+.contactsIcon span {
+  font-size: 18px;
+  font-weight: 700;
+}
