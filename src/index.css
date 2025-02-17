@@ -52,9 +52,3 @@ a {
 html {
   scroll-behavior: smooth;
 }
-
-.container {
-  width: 100%;
-  margin: 0 auto;
-  box-sizing: border-box;
-}

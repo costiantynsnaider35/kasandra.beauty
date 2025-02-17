@@ -5,9 +5,6 @@
   position: relative;
   overflow: hidden;
   padding: 10px;
-  min-height: 100vh;
-  width: 100%;
-  box-sizing: border-box;
 }
 .homePage::before {
   content: "";
@@ -38,12 +35,12 @@
 }
 .homeFancy1 {
   position: absolute;
-  top: 35px;
+  top: 5px;
   left: 55px;
 }
 .homeFancy2 {
   position: absolute;
-  top: 70px;
+  top: 40px;
   right: 55px;
 }
 
@@ -51,7 +48,7 @@
   position: absolute;
   font-size: 23px;
   font-weight: bold;
-  top: 130px;
+  top: 100px;
   left: 10px;
   right: 10px;
 }
