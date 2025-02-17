@@ -2,7 +2,7 @@ import About from "../../components/About/About";
 
 const AboutMe = () => {
   return (
-    <div>
+    <div className="container">
       <About />
     </div>
   );

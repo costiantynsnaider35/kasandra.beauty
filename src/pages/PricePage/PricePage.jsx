@@ -2,7 +2,7 @@ import Price from "../../components/Price/Price";
 
 const PricePage = () => {
   return (
-    <div>
+    <div className="container">
       <Price />
     </div>
   );
