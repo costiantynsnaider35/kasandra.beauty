@@ -1,28 +1,21 @@
 .app {
-  min-width: auto;
-  min-height: auto;
+  max-width: 375px;
 }
 
-/* @media (max-width: 480px) {
+@media (min-width: 320px) and (max-width: 374px) {
   .app {
-    padding: 5px;
+    width: 100%;
   }
 }
 
-@media (max-width: 768px) {
+@media screen and (min-width: 768px) {
   .app {
-    padding: 10px;
+    max-width: 768px;
   }
 }
 
-@media (max-width: 1024px) {
+@media screen and (min-width: 1440px) {
   .app {
-    padding: 15px;
+    max-width: 1440px;
   }
 }
-
-@media (max-width: 1200px) {
-  .app {
-    padding: 20px;
-  }
-} */
