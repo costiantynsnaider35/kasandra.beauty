@@ -1,4 +1,30 @@
 .app {
   min-width: 375px;
   min-height: auto;
+  width: 100%;
+  height: 100%;
 }
+
+/* @media (max-width: 480px) {
+  .app {
+    padding: 5px;
+  }
+}
+
+@media (max-width: 768px) {
+  .app {
+    padding: 10px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .app {
+    padding: 15px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .app {
+    padding: 20px;
+  }
+} */
