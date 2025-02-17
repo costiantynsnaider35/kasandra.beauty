@@ -7,7 +7,7 @@
   overflow: hidden;
   gap: 5px;
   padding: 10px;
-  height: 100vh;
+  min-height: 100vh;
 }
 
 .contacts::before {
