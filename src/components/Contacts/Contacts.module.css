@@ -7,7 +7,6 @@
   overflow: hidden;
   gap: 5px;
   padding: 10px;
-  min-height: 100vh;
 }
 
 .contacts::before {
@@ -20,7 +19,7 @@
   background-image: url("../../../public/img/1.jpg");
   background-repeat: no-repeat;
   background-size: cover;
-  background-attachment: fixed;
+  background-attachment: scroll;
   filter: blur(2px);
   opacity: 0.5;
   z-index: -1;
