@@ -38,8 +38,8 @@
   width: calc((100% - 4 * 5px) / 3);
 }
 .galleryItem img {
-  width: 130px;
-  height: 130px;
+  width: 150px;
+  height: 150px;
   object-fit: cover;
   object-position: center;
   border-radius: 10px;

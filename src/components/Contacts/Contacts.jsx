@@ -6,14 +6,6 @@ import ViberIcon from "../../../public/svg/icons8-viber.svg";
 const Contacts = () => {
   return (
     <div className={s.contacts}>
-      <div className={s.contactsAddress}>
-        <h2 className={s.contactsTitle}>Адреса:</h2>
-        <p className={s.contactsItem}>
-          БЦ &quot;Парк&quot;, вул. Академіка Корольова, 92a, Одеса,2-й
-          поверх,кабинет N
-        </p>
-      </div>
-      <Map />
       <div className={s.contactsSocial}>
         <h2 className={s.contactsTitle}>Контактні данні</h2>
         <div className={s.contactsList}>
@@ -37,6 +29,14 @@ const Contacts = () => {
           </a>
         </div>
       </div>
+      <div className={s.contactsAddress}>
+        <h2 className={s.contactsTitle}>Адреса:</h2>
+        <p className={s.contactsItem}>
+          БЦ &quot;Парк&quot;, вул. Академіка Корольова, 92a, Одеса,2-й
+          поверх,кабинет N
+        </p>
+      </div>
+      <Map />
     </div>
   );
 };
