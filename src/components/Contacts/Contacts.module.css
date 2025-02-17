@@ -16,7 +16,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-image: url("../../assets/img/1.jpg");
+  background-image: url("../../image/img/1.jpg");
   background-repeat: no-repeat;
   background-size: cover;
   background-attachment: fixed;
@@ -57,6 +57,7 @@
   flex-direction: row;
   align-items: center;
   justify-content: center;
+  text-decoration: none;
 }
 .icon {
   width: 48px;

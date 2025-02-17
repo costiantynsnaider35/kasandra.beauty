@@ -1,46 +1,42 @@
 import { useEffect, useRef } from "react";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
 import s from "./Map.module.css";
 
 const Map = () => {
   const mapRef = useRef(null);
+  const mapInstanceRef = useRef(null);
 
   useEffect(() => {
-    const initMap = () => {
-      if (!mapRef.current || !window.google) return;
+    if (mapInstanceRef.current) {
+      return;
+    }
 
-      const { Map } = window.google.maps;
-      const { AdvancedMarkerElement } = window.google.maps.marker;
+    if (mapRef.current) {
+      const map = L.map(mapRef.current, { scrollWheelZoom: false }).setView(
+        [46.3931714467098, 30.722667056674506],
+        14
+      );
 
-      const map = new Map(mapRef.current, {
-        center: { lat: 46.3931714467098, lng: 30.722667056674506 },
-        zoom: 14,
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution:
+          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      }).addTo(map);
+
+      L.marker([46.3931714467098, 30.722667056674506])
+        .addTo(map)
+        .bindPopup("Чаклую тут!))(БЦ Парк)")
+        .openPopup();
+
+      mapInstanceRef.current = map;
+
+      mapRef.current.addEventListener("mouseenter", () => {
+        map.scrollWheelZoom.enable();
       });
 
-      new AdvancedMarkerElement({
-        position: { lat: 46.3931714467098, lng: 30.722667056674506 },
-        map,
-        title: "Чаклую тут!))",
+      mapRef.current.addEventListener("mouseleave", () => {
+        map.scrollWheelZoom.disable();
       });
-    };
-
-    const loadScript = () => {
-      if (document.querySelector('script[src*="maps.googleapis.com"]')) {
-        initMap();
-        return;
-      }
-
-      const script = document.createElement("script");
-      script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyCzQuHAtIPNREARrqLyWvtdJSzdPFWELyA&callback=initMap&libraries=marker&loading=async`;
-      script.async = true;
-      script.defer = true;
-      document.head.appendChild(script);
-      window.initMap = initMap;
-    };
-
-    if (window.google) {
-      initMap();
-    } else {
-      loadScript();
     }
   }, []);
 
