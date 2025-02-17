@@ -33,7 +33,7 @@ const Contacts = () => {
         <h2 className={s.contactsTitle}>Адреса:</h2>
         <p className={s.contactsItem}>
           БЦ &quot;Парк&quot;, вул. Академіка Корольова, 92a, Одеса,2-й
-          поверх,кабинет N
+          поверх,кабинет N204
         </p>
       </div>
       <Map />

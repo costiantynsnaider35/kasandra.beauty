@@ -6,6 +6,7 @@
   background-repeat: no-repeat;
   background-size: cover;
   background-attachment: scroll;
+  background-position: center;
   padding: 10px;
   gap: 5px;
   min-height: 100vh;
