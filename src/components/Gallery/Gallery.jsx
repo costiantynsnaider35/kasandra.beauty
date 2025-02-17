@@ -26,7 +26,7 @@ const Gallery = () => {
             <img
               src={`/img/n${index + 1}.jpg`}
               alt={`nails${index + 1}`}
-              onClick={() => openModal(`/src/assets/img/n${index + 1}.jpg`)}
+              onClick={() => openModal(`/img/n${index + 1}.jpg`)}
             />
           </li>
         ))}
