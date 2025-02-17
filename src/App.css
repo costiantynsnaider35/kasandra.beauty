@@ -1,6 +1,7 @@
 .app {
   min-width: auto;
   min-height: auto;
+}
 
 /* @media (max-width: 480px) {
   .app {
