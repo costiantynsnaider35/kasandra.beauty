@@ -5,7 +5,7 @@ const Home = () => {
     <div className={s.homePage}>
       <img
         className={s.homeImg}
-        src="/src/image/img/photo_2025-02-15_20-04-04 (1).jpg"
+        src="/image/img/photo_2025-02-15_20-04-04 (1).jpg"
         alt="Kasandra Beauty"
       />
       <div className={s.homeTitle}>

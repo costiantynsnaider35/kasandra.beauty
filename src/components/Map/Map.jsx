@@ -2,6 +2,9 @@ import { useEffect, useRef } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import s from "./Map.module.css";
+import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
+import markerIcon from "leaflet/dist/images/marker-icon.png";
+import markerShadow from "leaflet/dist/images/marker-shadow.png";
 
 const Map = () => {
   const mapRef = useRef(null);
@@ -23,7 +26,17 @@ const Map = () => {
           '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       }).addTo(map);
 
-      L.marker([46.3931714467098, 30.722667056674506])
+      const customIcon = L.icon({
+        iconUrl: markerIcon,
+        iconRetinaUrl: markerIcon2x,
+        shadowUrl: markerShadow,
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowSize: [41, 41],
+      });
+
+      L.marker([46.3931714467098, 30.722667056674506], { icon: customIcon })
         .addTo(map)
         .bindPopup("Чаклую тут!))(БЦ Парк)")
         .openPopup();
