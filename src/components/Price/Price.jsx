@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import s from "./Price.module.css";
 
 const Price = () => {
@@ -59,16 +60,30 @@ const Price = () => {
             <h2 className={s.priceTitle}>{service.title}</h2>
           </div>
 
-          {openIndex === index && (
-            <ul className={s.priceList}>
-              {service.items.map((item, itemIndex) => (
-                <li key={itemIndex}>
-                  <p>{item.description}</p>
-                  <p>{item.price}</p>
-                </li>
-              ))}
-            </ul>
-          )}
+          <AnimatePresence>
+            {openIndex === index && (
+              <motion.ul
+                className={s.priceList}
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                {service.items.map((item, itemIndex) => (
+                  <motion.li
+                    key={itemIndex}
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.2, delay: itemIndex * 0.1 }}
+                  >
+                    <p>{item.description}</p>
+                    <p>{item.price}</p>
+                  </motion.li>
+                ))}
+              </motion.ul>
+            )}
+          </AnimatePresence>
         </div>
       ))}
     </div>

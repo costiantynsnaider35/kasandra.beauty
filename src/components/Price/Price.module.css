@@ -10,7 +10,6 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s ease;
 }
 .priceContainer img {
   width: 355px;
@@ -28,6 +27,7 @@
   align-items: center;
   justify-content: center;
   gap: 5px;
+  overflow: hidden;
 }
 .priceList li {
   display: flex;

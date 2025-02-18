@@ -30,8 +30,8 @@ const pageVariants = {
 
 const pageTransition = {
   type: "spring",
-  stiffness: 300,
-  damping: 30,
+  stiffness: 200,
+  damping: 20,
 };
 
 function App() {
