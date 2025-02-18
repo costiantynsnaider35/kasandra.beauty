@@ -50,11 +50,15 @@ const Price = () => {
   return (
     <div className={s.price}>
       {services.map((service, index) => (
-        <div className={s.priceContainer} key={index}>
-          <img src={service.image} alt={service.title} />
-          <h2 className={s.priceTitle} onClick={() => toggleAccordion(index)}>
-            {service.title}
-          </h2>
+        <div key={index}>
+          <div
+            className={s.priceContainer}
+            onClick={() => toggleAccordion(index)}
+          >
+            <img src={service.image} alt={service.title} />
+            <h2 className={s.priceTitle}>{service.title}</h2>
+          </div>
+
           {openIndex === index && (
             <ul className={s.priceList}>
               {service.items.map((item, itemIndex) => (

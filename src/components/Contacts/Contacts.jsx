@@ -1,7 +1,7 @@
 import Map from "../Map/Map";
 import s from "./Contacts.module.css";
-import InstagramIcon from "../../../public/svg/icons8-instagram.svg";
-import ViberIcon from "../../../public/svg/icons8-viber.svg";
+import InstagramIcon from "/svg/icons8-instagram.svg";
+import ViberIcon from "/svg/icons8-viber.svg";
 
 const Contacts = () => {
   return (
