@@ -1,3 +1,4 @@
+import BookingsBtn from "../BookingsBtn/BookingsBtn";
 import Map from "../Map/Map";
 import s from "./Contacts.module.css";
 import InstagramIcon from "/svg/icons8-instagram.svg";
@@ -5,6 +6,7 @@ import ViberIcon from "/svg/icons8-viber.svg";
 
 const Contacts = () => (
   <div className={s.contacts}>
+    <BookingsBtn />
     <div className={s.contactsSocial}>
       <h2 className={s.contactsTitle}>Контактні данні</h2>
       <div className={s.contactsList}>

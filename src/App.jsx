@@ -10,8 +10,9 @@ const AboutMe = lazy(() => import("./pages/AboutMe/AboutMe"));
 const GalleryPage = lazy(() => import("./pages/GalleryPage/GalleryPage"));
 const PricePage = lazy(() => import("./pages/PricePage/PricePage"));
 const ContactsPage = lazy(() => import("./pages/ContactsPage/ContactsPage"));
+const BookingsPage = lazy(() => import("./pages/BookingsPage/BookingsPage"));
 
-const routes = ["/", "/about", "/gallery", "/price", "/contacts"];
+const routes = ["/", "/about", "/gallery", "/price", "/contacts", "/bookings"];
 
 const pageVariants = {
   initial: (direction) => ({
@@ -105,6 +106,7 @@ function App() {
                     {index === 2 && <GalleryPage />}
                     {index === 3 && <PricePage />}
                     {index === 4 && <ContactsPage />}
+                    {index === 5 && <BookingsPage />}
                   </motion.div>
                 }
               />

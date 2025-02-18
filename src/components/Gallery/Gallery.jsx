@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Modal from "react-modal";
 import s from "./Gallery.module.css";
+import BookingsBtn from "../BookingsBtn/BookingsBtn";
 
 Modal.setAppElement("#root");
 
@@ -20,6 +21,7 @@ const Gallery = () => {
 
   return (
     <div className={s.gallery}>
+      <BookingsBtn />
       <ul className={s.galleryList}>
         {[...Array(12).keys()].map((index) => (
           <li key={index} className={s.galleryItem}>

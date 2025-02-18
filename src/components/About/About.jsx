@@ -1,8 +1,10 @@
+import BookingsBtn from "../BookingsBtn/BookingsBtn";
 import s from "./About.module.css";
 
 const About = () => {
   return (
     <div className={s.about}>
+      <BookingsBtn />
       <img
         className={s.aboutImg}
         src="/img/photo_2025-02-15_20-00-57 (1).jpg"

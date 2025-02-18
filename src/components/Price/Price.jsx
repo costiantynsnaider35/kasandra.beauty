@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import s from "./Price.module.css";
+import BookingsBtn from "../BookingsBtn/BookingsBtn";
 
 const Price = () => {
   const [openIndex, setOpenIndex] = useState(null);
@@ -50,6 +51,7 @@ const Price = () => {
 
   return (
     <div className={s.price}>
+      <BookingsBtn />
       {services.map((service, index) => (
         <div key={index}>
           <div
