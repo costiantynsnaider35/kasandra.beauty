@@ -53,7 +53,7 @@ const Map = () => {
     }
   }, []);
 
-  return <div ref={mapRef} className={s.map}></div>;
+  return <div ref={mapRef} className={`${s.map} map-container`}></div>;
 };
 
 export default Map;

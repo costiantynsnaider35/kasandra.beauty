@@ -9,9 +9,8 @@ const Header = ({ setDirection }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const buildLinkClass = ({ isActive }) => {
-    return clsx(s.link, isActive && s.activeLink);
-  };
+  const buildLinkClass = ({ isActive }) =>
+    clsx(s.link, isActive && s.activeLink);
 
   const handleLinkClick = (path) => {
     const currentIndex = routes.indexOf(location.pathname);
@@ -30,34 +29,19 @@ const Header = ({ setDirection }) => {
       >
         <IoIosHome width={23} height={23} />
       </NavLink>
-      <NavLink
-        className={buildLinkClass}
-        to="/about"
-        onClick={() => handleLinkClick("/about")}
-      >
-        Про мене
-      </NavLink>
-      <NavLink
-        className={buildLinkClass}
-        to="/gallery"
-        onClick={() => handleLinkClick("/gallery")}
-      >
-        Мої роботи
-      </NavLink>
-      <NavLink
-        className={buildLinkClass}
-        to="/price"
-        onClick={() => handleLinkClick("/price")}
-      >
-        Прайс
-      </NavLink>
-      <NavLink
-        className={buildLinkClass}
-        to="/contacts"
-        onClick={() => handleLinkClick("/contacts")}
-      >
-        Контакти
-      </NavLink>
+      {routes.slice(1).map((route) => (
+        <NavLink
+          key={route}
+          className={buildLinkClass}
+          to={route}
+          onClick={() => handleLinkClick(route)}
+        >
+          {route === "/about" && "Про мене"}
+          {route === "/gallery" && "Мої роботи"}
+          {route === "/price" && "Прайс"}
+          {route === "/contacts" && "Контакти"}
+        </NavLink>
+      ))}
     </div>
   );
 };

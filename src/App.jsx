@@ -1,6 +1,6 @@
 import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import "./App.css";
-import { lazy, Suspense, useState, useEffect } from "react";
+import { lazy, Suspense, useState, useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Layout from "./components/Header/Layout";
 
@@ -39,6 +39,7 @@ function App() {
   const navigate = useNavigate();
   const [direction, setDirection] = useState(0);
   const [loading, setLoading] = useState(true);
+  const dragStartRef = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
     if (location.state?.direction !== undefined) {
@@ -47,8 +48,23 @@ function App() {
     setLoading(false);
   }, [location]);
 
+  const handleDragStart = (event) => {
+    const target = event.target;
+    if (target.tagName === "IMG" || target.closest(".map-container")) {
+      event.preventDefault();
+    } else {
+      dragStartRef.current = { x: event.clientX, y: event.clientY };
+    }
+  };
+
   const handleDragEnd = (_, { offset, velocity }) => {
     const currentIndex = routes.indexOf(location.pathname);
+    const dragDistanceX = Math.abs(offset.x);
+    const dragDistanceY = Math.abs(offset.y);
+
+    if (dragDistanceY > dragDistanceX) {
+      return;
+    }
 
     if (offset.x > 100 || velocity.x > 2) {
       const prevIndex = (currentIndex - 1 + routes.length) % routes.length;
@@ -67,96 +83,32 @@ function App() {
       <Suspense fallback={<Loader />}>
         <AnimatePresence mode="wait" custom={direction}>
           <Routes location={location} key={location.key}>
-            <Route
-              path="/"
-              element={
-                <motion.div
-                  custom={direction}
-                  initial="initial"
-                  animate="enter"
-                  exit="out"
-                  variants={pageVariants}
-                  transition={pageTransition}
-                  drag="x"
-                  dragConstraints={{ left: 0, right: 0 }}
-                  onDragEnd={handleDragEnd}
-                >
-                  <HomePage />
-                </motion.div>
-              }
-            />
-            <Route
-              path="/about"
-              element={
-                <motion.div
-                  custom={direction}
-                  initial="initial"
-                  animate="enter"
-                  exit="out"
-                  variants={pageVariants}
-                  transition={pageTransition}
-                  drag="x"
-                  dragConstraints={{ left: 0, right: 0 }}
-                  onDragEnd={handleDragEnd}
-                >
-                  <AboutMe />
-                </motion.div>
-              }
-            />
-            <Route
-              path="/gallery"
-              element={
-                <motion.div
-                  custom={direction}
-                  initial="initial"
-                  animate="enter"
-                  exit="out"
-                  variants={pageVariants}
-                  transition={pageTransition}
-                  drag="x"
-                  dragConstraints={{ left: 0, right: 0 }}
-                  onDragEnd={handleDragEnd}
-                >
-                  <GalleryPage />
-                </motion.div>
-              }
-            />
-            <Route
-              path="/price"
-              element={
-                <motion.div
-                  custom={direction}
-                  initial="initial"
-                  animate="enter"
-                  exit="out"
-                  variants={pageVariants}
-                  transition={pageTransition}
-                  drag="x"
-                  dragConstraints={{ left: 0, right: 0 }}
-                  onDragEnd={handleDragEnd}
-                >
-                  <PricePage />
-                </motion.div>
-              }
-            />
-            <Route
-              path="/contacts"
-              element={
-                <motion.div
-                  custom={direction}
-                  initial="initial"
-                  animate="enter"
-                  exit="out"
-                  variants={pageVariants}
-                  transition={pageTransition}
-                  drag="x"
-                  dragConstraints={{ left: 0, right: 0 }}
-                  onDragEnd={handleDragEnd}
-                >
-                  <ContactsPage />
-                </motion.div>
-              }
-            />
+            {routes.map((path, index) => (
+              <Route
+                key={path}
+                path={path}
+                element={
+                  <motion.div
+                    custom={direction}
+                    initial="initial"
+                    animate="enter"
+                    exit="out"
+                    variants={pageVariants}
+                    transition={pageTransition}
+                    drag="x"
+                    dragConstraints={{ left: 0, right: 0 }}
+                    onDragStart={handleDragStart}
+                    onDragEnd={handleDragEnd}
+                  >
+                    {index === 0 && <HomePage />}
+                    {index === 1 && <AboutMe />}
+                    {index === 2 && <GalleryPage />}
+                    {index === 3 && <PricePage />}
+                    {index === 4 && <ContactsPage />}
+                  </motion.div>
+                }
+              />
+            ))}
           </Routes>
         </AnimatePresence>
       </Suspense>

@@ -1,10 +1,9 @@
 import Gallery from "../../components/Gallery/Gallery";
 
-const GalleryPage = () => {
-  return (
-    <div className="container">
-      <Gallery />
-    </div>
-  );
-};
+const GalleryPage = () => (
+  <div>
+    <Gallery />
+  </div>
+);
+
 export default GalleryPage;
