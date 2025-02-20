@@ -2,17 +2,28 @@ import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import "./App.css";
 import { lazy, Suspense, useState, useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import Layout from "./components/Header/Layout";
 
 const Loader = lazy(() => import("./components/Loader/Loader"));
+const Layout = lazy(() => import("./components/Header/Layout"));
 const HomePage = lazy(() => import("./pages/HomePage/HomePage"));
 const AboutMe = lazy(() => import("./pages/AboutMe/AboutMe"));
 const GalleryPage = lazy(() => import("./pages/GalleryPage/GalleryPage"));
 const PricePage = lazy(() => import("./pages/PricePage/PricePage"));
 const ContactsPage = lazy(() => import("./pages/ContactsPage/ContactsPage"));
 const BookingsPage = lazy(() => import("./pages/BookingsPage/BookingsPage"));
+const RegisterPage = lazy(() => import("./pages/RegisterPage/RegisterPage"));
+const AdminPage = lazy(() => import("./pages/AdminPage/AdminPage"));
 
-const routes = ["/", "/about", "/gallery", "/price", "/contacts", "/bookings"];
+const routes = [
+  "/",
+  "/about",
+  "/gallery",
+  "/price",
+  "/contacts",
+  "/bookings",
+  "/register",
+  "/admin",
+];
 
 const pageVariants = {
   initial: (direction) => ({
@@ -107,6 +118,8 @@ function App() {
                     {index === 3 && <PricePage />}
                     {index === 4 && <ContactsPage />}
                     {index === 5 && <BookingsPage />}
+                    {index === 6 && <RegisterPage />}
+                    {index === 7 && <AdminPage />}
                   </motion.div>
                 }
               />

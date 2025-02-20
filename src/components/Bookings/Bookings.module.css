@@ -16,13 +16,15 @@
 }
 
 .calendarHeader button {
+  flex: 1;
   background: none;
   border: none;
   cursor: pointer;
 }
 
 .calendarHeader h2 {
-  font-size: 64px;
+  flex: 2;
+  font-size: 28px;
   font-weight: bold;
 }
 
@@ -51,6 +53,7 @@
   background: linear-gradient(145deg, #ffffff, #e6e6e6);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   transition: background-color 0.3s, transform 0.3s;
+  cursor: pointer;
 }
 
 .day:hover {

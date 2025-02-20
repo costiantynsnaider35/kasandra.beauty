@@ -1,0 +1,43 @@
+.adminContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.adminContainer h2 {
+  font-size: 36px;
+  font-weight: bold;
+}
+
+.adminContainer p {
+  font-size: 18px;
+}
+
+.adminForm {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 400px;
+  margin-top: 20px;
+}
+
+.adminForm input {
+  margin-bottom: 10px;
+  padding: 10px;
+  font-size: 16px;
+}
+
+.assignButton {
+  padding: 10px;
+  font-size: 16px;
+  background-color: #005eff;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.assignButton:hover {
+  background-color: #0041cc;
+}
