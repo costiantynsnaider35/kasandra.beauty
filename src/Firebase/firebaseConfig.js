@@ -5,13 +5,15 @@ import CryptoJS from "crypto-js";
 
 const decrypt = (ciphertext, passphrase) => {
   if (!ciphertext) {
+    console.error("Ciphertext is undefined or null");
     return null;
   }
 
   try {
     const bytes = CryptoJS.AES.decrypt(ciphertext, passphrase);
     return bytes.toString(CryptoJS.enc.Utf8);
-  } catch {
+  } catch (error) {
+    console.error("Error decrypting data:", error);
     return null;
   }
 };
@@ -32,6 +34,8 @@ const firebaseConfig = {
   ),
   appId: decrypt(import.meta.env.VITE_FIREBASE_APP_ID, passphrase),
 };
+
+console.log("Firebase Config:", firebaseConfig);
 
 const app = initializeApp(firebaseConfig);
 

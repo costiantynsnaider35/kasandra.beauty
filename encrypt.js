@@ -1,7 +1,7 @@
 import CryptoJS from "crypto-js";
 
 const encrypt = (text) => {
-  const passphrase = "constantin161089";
+  const passphrase = "constantin161089"; // Используй свою секретную фразу
   return CryptoJS.AES.encrypt(text, passphrase).toString();
 };
 
