@@ -10,9 +10,19 @@ import { auth, db } from "./firebaseConfig.js";
 import CryptoJS from "crypto-js";
 
 const decrypt = (ciphertext) => {
-  const passphrase = "constantin161089";
-  const bytes = CryptoJS.AES.decrypt(ciphertext, passphrase);
-  return bytes.toString(CryptoJS.enc.Utf8);
+  if (!ciphertext) {
+    console.error("Ciphertext is undefined or null");
+    return null;
+  }
+
+  const passphrase = import.meta.env.VITE_ENCRYPTION_PASSPHRASE;
+  try {
+    const bytes = CryptoJS.AES.decrypt(ciphertext, passphrase);
+    return bytes.toString(CryptoJS.enc.Utf8);
+  } catch (error) {
+    console.error("Error decrypting data:", error);
+    return null;
+  }
 };
 
 const encryptedAdminEmail = import.meta.env.VITE_ADMIN_EMAIL;
@@ -33,7 +43,8 @@ export const registerUser = async (email, password) => {
     password
   );
   const user = userCredential.user;
-  const isAdminEmail = email === decrypt(encryptedAdminEmail);
+  const decryptedAdminEmail = decrypt(encryptedAdminEmail);
+  const isAdminEmail = email === decryptedAdminEmail;
 
   await setDoc(doc(db, "users", user.uid), {
     uid: user.uid,
@@ -45,6 +56,11 @@ export const registerUser = async (email, password) => {
 };
 
 export const getUserRole = async (userId) => {
+  if (!userId) {
+    console.error("User ID is undefined or null");
+    return "user";
+  }
+
   try {
     const userDocRef = doc(db, "users", userId);
     const userDoc = await getDoc(userDocRef);
@@ -57,6 +73,11 @@ export const getUserRole = async (userId) => {
 };
 
 export const loginUser = async (email, password) => {
+  if (!email || !password) {
+    console.error("Email or password is undefined or null");
+    throw new Error("Invalid email or password");
+  }
+
   const userCredential = await signInWithEmailAndPassword(
     auth,
     email,
