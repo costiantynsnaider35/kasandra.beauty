@@ -1,25 +1,21 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
+import CryptoJS from "crypto-js";
 
-console.log("API Key:", import.meta.env.VITE_FIREBASE_API_KEY);
-console.log("Auth Domain:", import.meta.env.VITE_FIREBASE_AUTH_DOMAIN);
-console.log("Project ID:", import.meta.env.VITE_FIREBASE_PROJECT_ID);
-console.log("Storage Bucket:", import.meta.env.VITE_FIREBASE_STORAGE_BUCKET);
-console.log(
-  "Messaging Sender ID:",
-  import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID
-);
-console.log("App ID:", import.meta.env.VITE_FIREBASE_APP_ID);
-console.log("Admin Email:", import.meta.env.VITE_ADMIN_EMAIL);
+const decrypt = (ciphertext) => {
+  const passphrase = "constantin161089";
+  const bytes = CryptoJS.AES.decrypt(ciphertext, passphrase);
+  return bytes.toString(CryptoJS.enc.Utf8);
+};
 
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  apiKey: decrypt(import.meta.env.VITE_FIREBASE_API_KEY),
+  authDomain: decrypt(import.meta.env.VITE_FIREBASE_AUTH_DOMAIN),
+  projectId: decrypt(import.meta.env.VITE_FIREBASE_PROJECT_ID),
+  storageBucket: decrypt(import.meta.env.VITE_FIREBASE_STORAGE_BUCKET),
+  messagingSenderId: decrypt(import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID),
+  appId: decrypt(import.meta.env.VITE_FIREBASE_APP_ID),
 };
 
 const app = initializeApp(firebaseConfig);

@@ -7,6 +7,15 @@ import {
 } from "firebase/auth";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import { auth, db } from "./firebaseConfig.js";
+import CryptoJS from "crypto-js";
+
+const decrypt = (ciphertext) => {
+  const passphrase = "constantin161089";
+  const bytes = CryptoJS.AES.decrypt(ciphertext, passphrase);
+  return bytes.toString(CryptoJS.enc.Utf8);
+};
+
+const encryptedAdminEmail = import.meta.env.VITE_ADMIN_EMAIL;
 
 export const checkAuthState = (callback) => {
   return onAuthStateChanged(auth, callback);
@@ -24,7 +33,7 @@ export const registerUser = async (email, password) => {
     password
   );
   const user = userCredential.user;
-  const isAdminEmail = email === import.meta.env.VITE_ADMIN_EMAIL;
+  const isAdminEmail = email === decrypt(encryptedAdminEmail);
 
   await setDoc(doc(db, "users", user.uid), {
     uid: user.uid,
