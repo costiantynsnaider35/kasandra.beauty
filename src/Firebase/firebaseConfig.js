@@ -11,7 +11,7 @@ console.log(
   import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID
 );
 console.log("App ID:", import.meta.env.VITE_FIREBASE_APP_ID);
-console.log("Email:", import.meta.env.VITE_ADMIN_EMAIL);
+console.log("Admin Email:", import.meta.env.VITE_ADMIN_EMAIL);
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
