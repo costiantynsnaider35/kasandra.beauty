@@ -3,12 +3,12 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  apiKey: "AIzaSyBmk8uExUubmKd7RL5SLfjJkO1DRdJKqXE",
+  authDomain: "kasandrabeauty-f43f6.firebaseapp.com",
+  projectId: "kasandrabeauty-f43f6",
+  storageBucket: "kasandrabeauty-f43f6.appspot.com",
+  messagingSenderId: "11834980597",
+  appId: "1:11834980597:web:ba75bf0aa19e5a2eecedbc",
 };
 
 const app = initializeApp(firebaseConfig);
