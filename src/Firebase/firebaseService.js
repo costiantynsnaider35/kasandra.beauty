@@ -6,7 +6,7 @@ import {
   fetchSignInMethodsForEmail,
 } from "firebase/auth";
 import { doc, setDoc, getDoc } from "firebase/firestore";
-import { auth, db } from "./firebaseConfig.js";
+import { auth, db } from "./firebaseConfig";
 import CryptoJS from "crypto-js";
 
 const decrypt = (ciphertext) => {
@@ -15,7 +15,7 @@ const decrypt = (ciphertext) => {
     return null;
   }
 
-  const passphrase = import.meta.env.VITE_ENCRYPTION_PASSPHRASE;
+  const passphrase = "constantin161089";
   try {
     const bytes = CryptoJS.AES.decrypt(ciphertext, passphrase);
     return bytes.toString(CryptoJS.enc.Utf8);
