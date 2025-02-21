@@ -1,0 +1,49 @@
+.logoutBtn {
+  position: relative;
+  font-size: 32px;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 10px 10px;
+  cursor: pointer;
+  border-radius: 30px;
+  transition: all 0.2s;
+  border: none;
+  font-family: inherit;
+  font-weight: 500;
+  color: black;
+  background-color: #085aad;
+}
+
+.logoutBtn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  font-weight: bold;
+}
+
+.logoutBtn:active {
+  transform: translateY(-1px);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  font-weight: bold;
+}
+
+.logoutBtn::after {
+  content: "";
+  display: inline-block;
+  height: 100%;
+  width: 100%;
+  border-radius: 100px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  transition: all 0.4s;
+}
+
+.logoutBtn::after {
+  background-color: #5ba2ea;
+}
+
+.logoutBtn:hover::after {
+  transform: scaleX(1.4) scaleY(1.6);
+  opacity: 0;
+}

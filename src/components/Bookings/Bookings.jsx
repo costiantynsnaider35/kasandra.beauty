@@ -4,6 +4,7 @@ import s from "./Bookings.module.css";
 import { useState } from "react";
 import { FaCircleArrowLeft } from "react-icons/fa6";
 import { FaCircleArrowRight } from "react-icons/fa6";
+import Logout from "../Logout/Logout";
 
 dayjs.locale("uk");
 
@@ -69,6 +70,7 @@ const Bookings = () => {
           <span>Не робочий день!</span>
         </div>
       </div>
+      <Logout />
     </div>
   );
 };

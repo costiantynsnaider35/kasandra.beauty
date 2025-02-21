@@ -12,18 +12,22 @@ const PricePage = lazy(() => import("./pages/PricePage/PricePage"));
 const ContactsPage = lazy(() => import("./pages/ContactsPage/ContactsPage"));
 const BookingsPage = lazy(() => import("./pages/BookingsPage/BookingsPage"));
 const RegisterPage = lazy(() => import("./pages/RegisterPage/RegisterPage"));
+const LoginPage = lazy(() => import("./pages/LoginPage/LoginPage")); // ✅ Добавил LoginPage
 const AdminPage = lazy(() => import("./pages/AdminPage/AdminPage"));
 
-const routes = [
-  "/",
-  "/about",
-  "/gallery",
-  "/price",
-  "/contacts",
-  "/bookings",
-  "/register",
-  "/admin",
-];
+const routeComponents = {
+  "/": HomePage,
+  "/about": AboutMe,
+  "/gallery": GalleryPage,
+  "/price": PricePage,
+  "/contacts": ContactsPage,
+  "/bookings": BookingsPage,
+  "/register": RegisterPage,
+  "/login": LoginPage,
+  "/admin": AdminPage,
+};
+
+const routes = Object.keys(routeComponents);
 
 const pageVariants = {
   initial: (direction) => ({
@@ -46,7 +50,7 @@ const pageTransition = {
   damping: 20,
 };
 
-function App() {
+const App = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [direction, setDirection] = useState(0);
@@ -95,40 +99,36 @@ function App() {
       <Suspense fallback={<Loader />}>
         <AnimatePresence mode="wait" custom={direction}>
           <Routes location={location} key={location.key}>
-            {routes.map((path, index) => (
-              <Route
-                key={path}
-                path={path}
-                element={
-                  <motion.div
-                    custom={direction}
-                    initial="initial"
-                    animate="enter"
-                    exit="out"
-                    variants={pageVariants}
-                    transition={pageTransition}
-                    drag="x"
-                    dragConstraints={{ left: 0, right: 0 }}
-                    onDragStart={handleDragStart}
-                    onDragEnd={handleDragEnd}
-                  >
-                    {index === 0 && <HomePage />}
-                    {index === 1 && <AboutMe />}
-                    {index === 2 && <GalleryPage />}
-                    {index === 3 && <PricePage />}
-                    {index === 4 && <ContactsPage />}
-                    {index === 5 && <BookingsPage />}
-                    {index === 6 && <RegisterPage />}
-                    {index === 7 && <AdminPage />}
-                  </motion.div>
-                }
-              />
-            ))}
+            {routes.map((path) => {
+              const Component = routeComponents[path];
+              return (
+                <Route
+                  key={path}
+                  path={path}
+                  element={
+                    <motion.div
+                      custom={direction}
+                      initial="initial"
+                      animate="enter"
+                      exit="out"
+                      variants={pageVariants}
+                      transition={pageTransition}
+                      drag="x"
+                      dragConstraints={{ left: 0, right: 0 }}
+                      onDragStart={handleDragStart}
+                      onDragEnd={handleDragEnd}
+                    >
+                      <Component />
+                    </motion.div>
+                  }
+                />
+              );
+            })}
           </Routes>
         </AnimatePresence>
       </Suspense>
     </div>
   );
-}
+};
 
 export default App;

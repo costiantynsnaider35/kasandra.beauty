@@ -78,6 +78,7 @@
   align-items: center;
   margin-top: 20px;
   gap: 30px;
+  margin-bottom: 50px;
 }
 .legend span {
   font-size: 22px;

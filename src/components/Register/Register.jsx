@@ -1,86 +1,80 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  getAuth,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-} from "firebase/auth";
-import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
-import { checkAuthState } from "../../firebaseConfig";
+import { registerUser } from "../../Firebase/firebaseService.js";
+import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import s from "./Register.module.css";
 
 const Register = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isRegistering, setIsRegistering] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [isFormValid, setIsFormValid] = useState(false);
+
+  const validateEmail = (email) => {
+    if (!email) {
+      setEmailError("Поле обов'язкове");
+      return false;
+    }
+    if (!email.includes("@")) {
+      setEmailError("Email повинен містити @");
+      return false;
+    }
+    setEmailError("");
+    return true;
+  };
+
+  const validatePassword = (password) => {
+    if (!password) {
+      setPasswordError("Поле обов'язкове");
+      return false;
+    }
+
+    const passwordRegex = /^[A-Z][a-zA-Z0-9!@#$%^&*]*[0-9]+[!@#$%^&*]+$/;
+
+    if (!passwordRegex.test(password) || password.length < 5) {
+      setPasswordError(
+        "Пароль має починатися з великої літери, містити мінімум 5 символи, хоча б 1 цифру і хоча б 1 спецсимвол (!@#$%^&*)"
+      );
+      return false;
+    }
+
+    setPasswordError("");
+    return true;
+  };
 
   useEffect(() => {
-    checkAuthState(async (user) => {
-      if (user) {
-        const db = getFirestore();
-        const userDoc = await getDoc(doc(db, "users", user.uid));
-        if (userDoc.exists() && userDoc.data().role === "admin") {
-          navigate("/admin");
-        } else {
-          navigate("/bookings");
-        }
-      }
-    });
-  }, [navigate]);
+    setIsFormValid(validateEmail(email) && validatePassword(password));
+  }, [email, password]);
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    const auth = getAuth();
-    const db = getFirestore();
+    setError("");
+    setLoading(true);
 
-    try {
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      const user = userCredential.user;
-
-      const isAdminEmail = email === "constantin161089@gmail.com";
-
-      await setDoc(doc(db, "users", user.uid), {
-        email,
-        role: isAdminEmail ? "admin" : "user",
-      });
-
-      navigate(isAdminEmail ? "/admin" : "/bookings");
-    } catch (error) {
-      console.error("Error registering user: ", error);
+    if (!isFormValid) {
+      setLoading(false);
+      return;
     }
-  };
-
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    const auth = getAuth();
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      const db = getFirestore();
-      const user = auth.currentUser;
-      const userDoc = await getDoc(doc(db, "users", user.uid));
-      if (userDoc.exists() && userDoc.data().role === "admin") {
-        navigate("/admin");
-      } else {
-        navigate("/bookings");
-      }
-    } catch (error) {
-      console.error("Error logging in user: ", error);
+      const redirectPath = await registerUser(email, password);
+      navigate(redirectPath);
+    } catch (err) {
+      setError(err.message || "Сталася невідома помилка!");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className={s.registerContainer}>
-      <h2>{isRegistering ? "Зареєструватись" : "Увійти"}</h2>
-      <form
-        onSubmit={isRegistering ? handleRegister : handleLogin}
-        className={s.registerForm}
-      >
+      <h2 className={s.registerTitle}>Реєстрація</h2>
+      <form onSubmit={handleRegister} className={s.registerForm}>
         <input
           type="email"
           placeholder="Email"
@@ -88,23 +82,43 @@ const Register = () => {
           onChange={(e) => setEmail(e.target.value)}
           required
         />
-        <input
-          type="password"
-          placeholder="Пароль"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <button type="submit" className={s.registerButton}>
-          {isRegistering ? "Зареєструватись" : "Увійти"}
+        {emailError && <p className={s.errorText}>{emailError}</p>}
+
+        <div className={s.passwordWrapper}>
+          <input
+            type={showPassword ? "text" : "password"}
+            placeholder="Пароль"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <button
+            type="button"
+            className={s.eyeButton}
+            onClick={() => setShowPassword((prev) => !prev)}
+          >
+            {showPassword ? <FaRegEye /> : <FaRegEyeSlash />}
+          </button>
+        </div>
+        {passwordError && <p className={s.errorText}>{passwordError}</p>}
+
+        <button
+          type="submit"
+          className={s.registerButton}
+          disabled={!isFormValid || loading}
+        >
+          {loading ? "Реєстрація..." : "Зареєструватися"}
         </button>
       </form>
-      <button
-        onClick={() => setIsRegistering(!isRegistering)}
-        className={s.toggleButton}
-      >
-        {isRegistering ? "Увійти" : "Зареєструватись"}
-      </button>
+
+      {error && <p className={s.errorText}>{error}</p>}
+
+      <p className={s.toggleRegister}>
+        Вже маєте акаунт?
+        <button onClick={() => navigate("/login")} className={s.toggleButton}>
+          Увійти
+        </button>
+      </p>
     </div>
   );
 };

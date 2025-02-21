@@ -1,36 +1,27 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { checkAuthState } from "../../firebaseConfig";
+import { checkAuthState, getUserRole } from "../../Firebase/firebaseService.js";
 import s from "./BookingsBtn.module.css";
 
 const BookingsBtn = () => {
   const navigate = useNavigate();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [route, setRoute] = useState("/register");
 
   useEffect(() => {
-    checkAuthState((user) => {
-      if (user) {
-        setIsAuthenticated(true);
-      } else {
-        setIsAuthenticated(false);
-      }
+    const unsubscribe = checkAuthState(async (user) => {
+      if (!user) return setRoute("/register");
+
+      const role = await getUserRole(user.uid);
+      setRoute(role === "admin" ? "/admin" : "/bookings");
     });
+
+    return unsubscribe;
   }, []);
 
-  const handleBookingClick = () => {
-    if (isAuthenticated) {
-      navigate("/bookings");
-    } else {
-      navigate("/register");
-    }
-  };
-
   return (
-    <div>
-      <button className={s.bookingsBtn} onClick={handleBookingClick}>
-        <span>Натисни, щоб записатись!</span>
-      </button>
-    </div>
+    <button className={s.bookingsBtn} onClick={() => navigate(route)}>
+      <span>Натисни, щоб записатись!</span>
+    </button>
   );
 };
 
