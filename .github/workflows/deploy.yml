@@ -27,7 +27,8 @@ jobs:
       - name: Authenticate to Google Cloud
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
-        run: echo ${{ secrets.GOOGLE_CREDENTIALS }} > /tmp/keys.json
+        run: |
+          echo "${{ secrets.GOOGLE_CREDENTIALS }}" > /tmp/keys.json
 
       - name: Set environment variables
         run: |
