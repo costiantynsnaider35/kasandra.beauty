@@ -27,10 +27,7 @@ jobs:
       - name: Authenticate to Google Cloud
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
-        run: |
-          echo ${{ secrets.GOOGLE_CREDENTIALS }} > /tmp/keys.json
-          gcloud auth activate-service-account --key-file=/tmp/keys.json
-          gcloud config set project your-firebase-project-id
+        run: echo ${{ secrets.GOOGLE_CREDENTIALS }} > /tmp/keys.json
 
       - name: Set environment variables
         run: |
@@ -48,4 +45,4 @@ jobs:
       - name: Deploy to Firebase
         run: firebase deploy
         env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+          GOOGLE_APPLICATION_CREDENTIALS: /tmp/keys.json
