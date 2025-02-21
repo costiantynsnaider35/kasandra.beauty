@@ -25,7 +25,7 @@ jobs:
         run: npm install -g firebase-tools
 
       - name: Authenticate with Firebase
-        run: firebase login:ci --token ${{ secrets.FIREBASE_TOKEN }}
+        run: echo '${{ secrets.FIREBASE_TOKEN }}' > ~/.firebase_token
 
       - name: Set environment variables
         run: |
@@ -41,4 +41,4 @@ jobs:
         run: npm run build
 
       - name: Deploy to Firebase
-        run: firebase deploy
+        run: firebase deploy --token "$(cat ~/.firebase_token)"
