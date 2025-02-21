@@ -3,7 +3,7 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import CryptoJS from "crypto-js";
 
-// Функція розшифрування
+// Функция расшифровки
 const decrypt = (ciphertext, passphrase) => {
   if (!ciphertext) {
     console.error("Ciphertext is undefined or null");
@@ -21,7 +21,7 @@ const decrypt = (ciphertext, passphrase) => {
 
 const passphrase = import.meta.env.VITE_ENCRYPTION_PASSPHRASE;
 
-// Логування для перевірки значень перемінних середовища
+// Логирование для проверки значений переменных окружения
 console.log("VITE_FIREBASE_API_KEY:", import.meta.env.VITE_FIREBASE_API_KEY);
 console.log(
   "VITE_FIREBASE_AUTH_DOMAIN:",
@@ -43,7 +43,7 @@ console.log("VITE_FIREBASE_APP_ID:", import.meta.env.VITE_FIREBASE_APP_ID);
 console.log("VITE_ADMIN_EMAIL:", import.meta.env.VITE_ADMIN_EMAIL);
 console.log("VITE_ENCRYPTION_PASSPHRASE:", passphrase);
 
-// Розшифровка конфігурації Firebase
+// Расшифровка конфигурации Firebase
 const firebaseConfig = {
   apiKey: decrypt(import.meta.env.VITE_FIREBASE_API_KEY, passphrase),
   authDomain: decrypt(import.meta.env.VITE_FIREBASE_AUTH_DOMAIN, passphrase),
@@ -59,7 +59,7 @@ const firebaseConfig = {
   appId: decrypt(import.meta.env.VITE_FIREBASE_APP_ID, passphrase),
 };
 
-// Логування для перевірки розшифровки
+// Логирование для проверки расшифровки
 console.log("Firebase Config:", firebaseConfig);
 
 const app = initializeApp(firebaseConfig);
