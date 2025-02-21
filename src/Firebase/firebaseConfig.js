@@ -5,15 +5,13 @@ import CryptoJS from "crypto-js";
 
 const decrypt = (ciphertext, passphrase) => {
   if (!ciphertext) {
-    console.error("Ciphertext is undefined or null");
     return null;
   }
 
   try {
     const bytes = CryptoJS.AES.decrypt(ciphertext, passphrase);
     return bytes.toString(CryptoJS.enc.Utf8);
-  } catch (error) {
-    console.error("Error decrypting data:", error);
+  } catch {
     return null;
   }
 };
