@@ -27,35 +27,27 @@ const decrypt = (ciphertext, passphrase) => {
 
 const passphrase = import.meta.env.VITE_ENCRYPTION_PASSPHRASE;
 
-// Логирование значений переменных окружения перед расшифровкой
+// Логирование всех значений переменных окружения
+console.log("Environment Variables:");
+console.log("VITE_FIREBASE_API_KEY:", import.meta.env.VITE_FIREBASE_API_KEY);
 console.log(
-  "VITE_FIREBASE_API_KEY (зашифрованный):",
-  import.meta.env.VITE_FIREBASE_API_KEY
-);
-console.log(
-  "VITE_FIREBASE_AUTH_DOMAIN (зашифрованный):",
+  "VITE_FIREBASE_AUTH_DOMAIN:",
   import.meta.env.VITE_FIREBASE_AUTH_DOMAIN
 );
 console.log(
-  "VITE_FIREBASE_PROJECT_ID (зашифрованный):",
+  "VITE_FIREBASE_PROJECT_ID:",
   import.meta.env.VITE_FIREBASE_PROJECT_ID
 );
 console.log(
-  "VITE_FIREBASE_STORAGE_BUCKET (зашифрованный):",
+  "VITE_FIREBASE_STORAGE_BUCKET:",
   import.meta.env.VITE_FIREBASE_STORAGE_BUCKET
 );
 console.log(
-  "VITE_FIREBASE_MESSAGING_SENDER_ID (зашифрованный):",
+  "VITE_FIREBASE_MESSAGING_SENDER_ID:",
   import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID
 );
-console.log(
-  "VITE_FIREBASE_APP_ID (зашифрованный):",
-  import.meta.env.VITE_FIREBASE_APP_ID
-);
-console.log(
-  "VITE_ADMIN_EMAIL (зашифрованный):",
-  import.meta.env.VITE_ADMIN_EMAIL
-);
+console.log("VITE_FIREBASE_APP_ID:", import.meta.env.VITE_FIREBASE_APP_ID);
+console.log("VITE_ADMIN_EMAIL:", import.meta.env.VITE_ADMIN_EMAIL);
 console.log("VITE_ENCRYPTION_PASSPHRASE:", passphrase);
 
 // Расшифровка конфигурации Firebase
