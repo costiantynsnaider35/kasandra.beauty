@@ -24,8 +24,7 @@ const Login = () => {
         } else {
           navigate("/bookings");
         }
-      } catch (error) {
-        console.error("Помилка отримання ролі користувача: ", error);
+      } catch {
         setError("Не вдалося отримати дані користувача.");
       }
     },
@@ -57,8 +56,7 @@ const Login = () => {
         password
       );
       checkUserRole(userCredential.user.uid);
-    } catch (error) {
-      console.error("Помилка входу: ", error);
+    } catch {
       setError("Неправильний email або пароль.");
     }
   };
