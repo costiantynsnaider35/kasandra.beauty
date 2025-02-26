@@ -56,12 +56,6 @@
   cursor: pointer;
 }
 
-.day:hover {
-  background: #008000;
-  transform: scale(1.1);
-  font-size: 24px;
-}
-
 .outsideMonth {
   opacity: 0.5;
 }

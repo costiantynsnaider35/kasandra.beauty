@@ -15,6 +15,7 @@ const RegisterPage = lazy(() => import("./pages/RegisterPage/RegisterPage"));
 const LoginPage = lazy(() => import("./pages/LoginPage/LoginPage"));
 const AdminPage = lazy(() => import("./pages/AdminPage/AdminPage"));
 const DayPage = lazy(() => import("./pages/DayPage/DayPage"));
+const DayUserPage = lazy(() => import("./pages/DayUserPage/DayUserPage"));
 
 const routeComponents = {
   "/": HomePage,
@@ -23,6 +24,7 @@ const routeComponents = {
   "/price": PricePage,
   "/contacts": ContactsPage,
   "/bookings": BookingsPage,
+  "/bookings/day/:date": DayUserPage,
   "/register": RegisterPage,
   "/login": LoginPage,
   "/admin": AdminPage,

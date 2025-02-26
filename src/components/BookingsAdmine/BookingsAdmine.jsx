@@ -16,8 +16,12 @@ const BookingsAdmine = () => {
 
   useEffect(() => {
     const fetchHolidays = async () => {
-      const holidayDates = await getHolidays();
-      setHolidays(holidayDates);
+      try {
+        const holidayDates = await getHolidays();
+        setHolidays(holidayDates);
+      } catch (error) {
+        console.error("Ошибка при получении выходных дней:", error);
+      }
     };
     fetchHolidays();
   }, []);
@@ -27,6 +31,7 @@ const BookingsAdmine = () => {
     const endOfMonth = currentDate.endOf("month").endOf("week");
     const days = [];
     let day = startOfMonth;
+
     while (day.isBefore(endOfMonth, "day")) {
       days.push(day);
       day = day.add(1, "day");
@@ -58,11 +63,16 @@ const BookingsAdmine = () => {
           </div>
         ))}
         {generateDays(currentDate).map((day, index) => {
-          const isNonWorking = holidays.includes(day.format("YYYY-MM-DD"));
+          const formattedDate = day.format("YYYY-MM-DD");
+          const isNonWorking = holidays.includes(formattedDate);
+          const isToday = day.isSame(dayjs(), "day");
+
           return (
             <div
               key={index}
-              className={`${s.day} ${isNonWorking ? s.nonWorkingDay : ""}`}
+              className={`${s.day} ${isNonWorking ? s.nonWorkingDay : ""} ${
+                isToday ? s.today : ""
+              }`}
               onClick={() => handleDayClick(day)}
             >
               {day.date()}
@@ -73,15 +83,16 @@ const BookingsAdmine = () => {
       <div className={s.legend}>
         <div className={s.legendItem}>
           <div className={s.workingDay}></div>
-          <span>Робочий день!</span>
+          <span>Робочий день</span>
         </div>
         <div className={s.legendItem}>
           <div className={s.nonWorkingDay}></div>
-          <span>Не робочий день!</span>
+          <span>Не робочий день</span>
         </div>
       </div>
       <Logout />
     </div>
   );
 };
+
 export default BookingsAdmine;
