@@ -41,10 +41,12 @@
   align-items: center;
   justify-content: center;
   padding: 20px;
+  z-index: 1000;
 }
 .modalContent {
   position: relative;
   border-radius: 15px;
+  z-index: 1001;
 }
 .modalImage {
   max-width: 100%;

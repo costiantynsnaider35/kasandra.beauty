@@ -15,13 +15,15 @@ const Price = () => {
       title: "Манікюр",
       image: "/img/man.jpg",
       items: [
-        { description: "з покриттям", price: "700грн" },
-        { description: "без покриття", price: "350грн" },
-        { description: "зняття іншого майстра", price: "50грн" },
-        { description: "чоловічий", price: "450грн" },
-        { description: "нарощування", price: "1000грн" },
-        { description: "корекція нарощених нігтів", price: "800грн" },
+        { description: "зняття від іншого майстра", price: "50грн" },
+        { description: "корекція 1-го нігтя", price: "50грн" },
         { description: "френч", price: "100грн" },
+        { description: "без покриття", price: "350грн" },
+        { description: "з покриттям", price: "750грн" },
+        { description: "корекція нарощених нігтів", price: "800грн" },
+        { description: "нарощування", price: "1000грн" },
+        { description: "арт френч", price: "2500грн" },
+        { description: "чоловічий", price: "450грн" },
         {
           description: (
             <span>(*дизайн 2-х,4-х нігтів, як комплімент від майстра!)</span>
@@ -33,10 +35,10 @@ const Price = () => {
       title: "Педикюр",
       image: "/img/ped.jpg",
       items: [
-        { description: "звичайний", price: "750грн" },
-        { description: "чищення", price: "450грн" },
-        { description: "чоловічий", price: "600грн" },
+        { description: "чищення", price: "500грн" },
         { description: "подологічний", price: "600грн" },
+        { description: "з покриттям", price: "800грн" },
+        { description: "чоловічий", price: "600грн" },
       ],
     },
     {

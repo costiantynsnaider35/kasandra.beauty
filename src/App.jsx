@@ -12,8 +12,9 @@ const PricePage = lazy(() => import("./pages/PricePage/PricePage"));
 const ContactsPage = lazy(() => import("./pages/ContactsPage/ContactsPage"));
 const BookingsPage = lazy(() => import("./pages/BookingsPage/BookingsPage"));
 const RegisterPage = lazy(() => import("./pages/RegisterPage/RegisterPage"));
-const LoginPage = lazy(() => import("./pages/LoginPage/LoginPage")); // ✅ Добавил LoginPage
+const LoginPage = lazy(() => import("./pages/LoginPage/LoginPage"));
 const AdminPage = lazy(() => import("./pages/AdminPage/AdminPage"));
+const DayPage = lazy(() => import("./pages/DayPage/DayPage"));
 
 const routeComponents = {
   "/": HomePage,
@@ -25,6 +26,7 @@ const routeComponents = {
   "/register": RegisterPage,
   "/login": LoginPage,
   "/admin": AdminPage,
+  "/admin/day/:date": DayPage,
 };
 
 const routes = Object.keys(routeComponents);
