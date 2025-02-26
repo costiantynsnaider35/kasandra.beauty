@@ -5,7 +5,7 @@ import s from "./BookingsAdmine.module.css";
 import { FaCircleArrowLeft, FaCircleArrowRight } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 import Logout from "../Logout/Logout";
-import { getHolidays } from "../../firebaseHolidays";
+import { getHolidays } from "../../Firebase/firebaseHolidays.js";
 
 dayjs.locale("uk");
 
