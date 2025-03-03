@@ -2,6 +2,7 @@ import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import "./App.css";
 import { lazy, Suspense, useState, useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { Toaster } from "react-hot-toast";
 
 const Loader = lazy(() => import("./components/Loader/Loader"));
 const Layout = lazy(() => import("./components/Header/Layout"));
@@ -99,6 +100,7 @@ const App = () => {
 
   return (
     <div className={`app ${loading ? "loading" : ""}`}>
+      <Toaster position="top-center" />
       <Layout setDirection={setDirection} />
       <Suspense fallback={<Loader />}>
         <AnimatePresence mode="wait" custom={direction}>

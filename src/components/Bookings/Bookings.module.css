@@ -54,6 +54,10 @@
   cursor: pointer;
 }
 
+.day[data-booked="true"] {
+  background-color: #078357;
+}
+
 .outsideMonth {
   opacity: 0.5;
 }

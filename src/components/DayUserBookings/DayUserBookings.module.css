@@ -7,7 +7,55 @@
   padding: 10px;
   min-height: 100vh;
 }
-
+.bookingList {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  border-radius: 5px;
+  gap: 5px;
+}
+.bookingItem {
+  border: 1px solid;
+  border-radius: 5px;
+  padding: 5px;
+  width: 350px;
+  font-size: 16px;
+  font-weight: 500;
+}
+.timeBookings {
+  font-size: 18px;
+  font-weight: bold;
+}
+.procBookings {
+  font-size: 16px;
+  font-weight: 500;
+}
+.containerBtn {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 15px;
+}
+.regBtn {
+  padding: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: #0022ff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+}
+.delBtn {
+  padding: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: #ff2200;
+  color: white;
+  border: none;
+  border-radius: 5px;
+}
 .form {
   display: flex;
   flex-direction: column;
@@ -115,4 +163,14 @@
   color: white;
   border: none;
   border-radius: 5px;
+}
+.accordionHeader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.categoryTitle {
+  font-size: 25px;
+  font-weight: 500;
 }
