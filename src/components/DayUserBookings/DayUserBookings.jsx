@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import dayjs from "dayjs";
 import "dayjs/locale/uk";
 import s from "./DayUserBookings.module.css";
@@ -31,8 +31,12 @@ const proceduresList = [
 ];
 
 const DayUserBookings = () => {
+  const { date } = useParams();
   const navigate = useNavigate();
-  const today = dayjs().format("YYYY-MM-DD");
+  const selectedDate = date ? dayjs(date) : dayjs();
+  const formattedDate = selectedDate.format("YYYY-MM-DD");
+  const displayDate = selectedDate.format("D MMMM");
+
   const [bookings, setBookings] = useState([]);
   const [formData, setFormData] = useState({
     fullName: "",
@@ -44,12 +48,12 @@ const DayUserBookings = () => {
 
   useEffect(() => {
     const fetchBookings = async () => {
-      const data = await getBookingsByDate(today);
+      const data = await getBookingsByDate(formattedDate);
       setBookings(data);
     };
 
     fetchBookings();
-  }, [today]);
+  }, [formattedDate]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -79,7 +83,7 @@ const DayUserBookings = () => {
 
     const newBooking = {
       ...formData,
-      date: today,
+      date: formattedDate,
     };
 
     const addedBooking = await addBooking(newBooking);
@@ -97,7 +101,7 @@ const DayUserBookings = () => {
 
   return (
     <div className={s.container}>
-      <h2>Записи на сьогодні</h2>
+      <h2>Записи на {displayDate}</h2>
 
       {bookings.length > 0 ? (
         <ol>
@@ -110,7 +114,7 @@ const DayUserBookings = () => {
       )}
 
       <form className={s.form} onSubmit={handleSubmit}>
-        <label>
+        <label className={s.formLabel}>
           Ім’я та прізвище*:
           <input
             type="text"
@@ -118,10 +122,11 @@ const DayUserBookings = () => {
             value={formData.fullName}
             onChange={handleChange}
             required
+            className={s.formInput}
           />
         </label>
 
-        <label>
+        <label className={s.formLabel}>
           Номер телефону*:
           <input
             type="tel"
@@ -129,22 +134,24 @@ const DayUserBookings = () => {
             value={formData.phoneNumber}
             onChange={handleChange}
             required
+            className={s.formInput}
           />
         </label>
 
         <fieldset>
           <legend>Процедури*:</legend>
           {proceduresList.map((category) => (
-            <div key={category.category}>
-              <strong>{category.category}</strong>
+            <div key={category.category} className={s.procedureCategory}>
+              <strong className={s.categoryProc}>{category.category}</strong>
               {category.options.map((option) => (
-                <label key={option}>
+                <label key={option} className={s.procedureItem}>
                   <input
                     type="checkbox"
                     name="procedures"
                     value={option}
                     checked={formData.procedures.includes(option)}
                     onChange={handleCheckboxChange}
+                    className={s.procedureCheckbox}
                   />
                   {option}
                 </label>
@@ -153,7 +160,7 @@ const DayUserBookings = () => {
           ))}
         </fieldset>
 
-        <label>
+        <label className={s.timeLabel}>
           Час*:
           <input
             type="time"
@@ -161,15 +168,17 @@ const DayUserBookings = () => {
             value={formData.time}
             onChange={handleChange}
             required
+            className={s.timeInput}
           />
         </label>
 
-        <label>
+        <label className={s.comLabel}>
           Коментар:
           <textarea
             name="comment"
             value={formData.comment}
             onChange={handleChange}
+            className={s.comInput}
           ></textarea>
         </label>
 
