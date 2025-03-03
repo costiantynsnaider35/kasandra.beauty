@@ -14,7 +14,6 @@ const Bookings = () => {
   const [holidays, setHolidays] = useState([]);
   const navigate = useNavigate();
 
-  // Загружаем выходные дни из Firestore
   useEffect(() => {
     const fetchHolidays = async () => {
       const holidayDates = await getHolidays();
@@ -24,7 +23,6 @@ const Bookings = () => {
     fetchHolidays();
   }, []);
 
-  // Генерация дней календаря
   const generateDays = (currentDate) => {
     const startOfMonth = currentDate.startOf("month").startOf("week");
     const endOfMonth = currentDate.endOf("month").endOf("week");
@@ -85,7 +83,8 @@ const Bookings = () => {
               className={`${s.day} ${isCurrentMonth ? "" : s.outsideMonth} ${
                 isToday ? s.today : ""
               } ${isHoliday ? s.nonWorkingDay : ""}`}
-              onClick={() => handleDayClick(day)}
+              onClick={!isHoliday ? () => handleDayClick(day) : undefined}
+              style={isHoliday ? { pointerEvents: "none", opacity: 0.5 } : {}}
             >
               {day.date()}
             </div>
