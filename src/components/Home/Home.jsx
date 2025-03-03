@@ -13,9 +13,6 @@ const Home = () => {
           <span>B</span>EAUTY
         </div>
       </div>
-      <p className={s.homeInfo}>
-        Твоя особиста чарівниця у світі манікюру та педикюру!
-      </p>
     </div>
   );
 };

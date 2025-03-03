@@ -16,20 +16,21 @@
 }
 
 .aboutText {
-  font-size: 20px;
-  font-weight: 400;
+  font-size: 16px;
+  font-weight: 500;
   line-height: 1.5;
   letter-spacing: 1px;
-  text-align: justify;
-  word-spacing: -2px;
+  word-spacing: 1px;
 }
 
 .aboutText p {
   margin-bottom: 10px;
+  word-spacing: 1px;
 }
 
 .aboutText ul {
   list-style-type: disc;
-  padding-left: 25px;
-  word-spacing: -2px;
+  padding-left: 15px;
+  word-spacing: 1px;
+  margin-bottom: 10px;
 }
