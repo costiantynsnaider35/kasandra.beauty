@@ -6,24 +6,30 @@ import { FaCircleArrowLeft, FaCircleArrowRight } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 import Logout from "../Logout/Logout";
 import { getHolidays } from "../../Firebase/firebaseHolidays.js";
+import { getAllBookingDates } from "../../Firebase/firebaseBookings.js"; // Функция получения всех дат с записями
+import toast from "react-hot-toast";
 
 dayjs.locale("uk");
 
 const BookingsAdmine = () => {
   const [currentDate, setCurrentDate] = useState(dayjs());
   const [holidays, setHolidays] = useState([]);
+  const [bookedDates, setBookedDates] = useState([]); // Храним даты с записями
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchHolidays = async () => {
+    const fetchData = async () => {
       try {
         const holidayDates = await getHolidays();
         setHolidays(holidayDates);
-      } catch (error) {
-        console.error("Ошибка при получении выходных дней:", error);
+
+        const bookingDates = await getAllBookingDates(); // Загружаем даты с записями
+        setBookedDates(bookingDates);
+      } catch {
+        toast.error("Не вдалося отримати дані. Спробуйте пізніше.");
       }
     };
-    fetchHolidays();
+    fetchData();
   }, []);
 
   const generateDays = (currentDate) => {
@@ -66,13 +72,13 @@ const BookingsAdmine = () => {
           const formattedDate = day.format("YYYY-MM-DD");
           const isNonWorking = holidays.includes(formattedDate);
           const isToday = day.isSame(dayjs(), "day");
+          const isBooked = bookedDates.includes(formattedDate); // Проверяем, есть ли запись
 
           return (
             <div
               key={index}
-              className={`${s.day} ${isNonWorking ? s.nonWorkingDay : ""} ${
-                isToday ? s.today : ""
-              }`}
+              className={`${s.day} ${isNonWorking ? s.nonWorkingDay : ""} 
+                ${isToday ? s.today : ""} ${isBooked ? s.bookedDay : ""}`}
               onClick={() => handleDayClick(day)}
             >
               {day.date()}

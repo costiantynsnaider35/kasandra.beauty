@@ -16,13 +16,13 @@ const Price = () => {
       image: "/img/man.jpg",
       items: [
         { description: "зняття від іншого майстра", price: "50грн" },
-        { description: "корекція 1-го нігтя", price: "50грн" },
+        { description: "корекція 1-го нігтя", price: " від 50грн" },
         { description: "френч", price: "100грн" },
         { description: "без покриття", price: "350грн" },
         { description: "з покриттям", price: "750грн" },
-        { description: "корекція нарощених нігтів", price: "800грн" },
-        { description: "нарощування", price: "1000грн" },
-        { description: "арт френч", price: "2500грн" },
+        { description: "корекція нарощених нігтів", price: "від 800грн" },
+        { description: "нарощування", price: "від 1000грн" },
+        { description: "арт френч", price: "від 2500грн" },
         { description: "чоловічий", price: "450грн" },
         {
           description: (

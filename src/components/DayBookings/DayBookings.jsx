@@ -26,16 +26,27 @@ const DayBookings = () => {
 
         const bookingsData = await getBookingsByDate(date);
 
-        const formattedBookings = bookingsData.map((booking) => ({
-          id: booking.id,
-          fullName: booking.fullName,
-          phoneNumber: booking.phoneNumber,
-          procedures: Array.isArray(booking.procedure)
-            ? booking.procedure
-            : [booking.procedure],
-          time: booking.time,
-          comment: booking.comment || "",
-        }));
+        // Добавляем логирование данных до и после их форматирования
+        console.log("Bookings Data:", bookingsData);
+
+        const formattedBookings = bookingsData.map((booking) => {
+          // Логирование до форматирования
+
+          const procedures = Array.isArray(booking.procedures)
+            ? booking.procedures
+            : [booking.procedures]; // Исправлено на 'procedures'
+
+          // Логирование после обработки процедур
+
+          return {
+            id: booking.id,
+            fullName: booking.fullName,
+            phoneNumber: booking.phoneNumber,
+            procedures: procedures,
+            time: booking.time,
+            comment: booking.comment || "",
+          };
+        });
 
         setBookings(formattedBookings);
       } catch (error) {
@@ -83,30 +94,28 @@ const DayBookings = () => {
         <ul className={s.bookingList}>
           {bookings.map((booking) => (
             <li key={booking.id} className={s.bookingItem}>
-              <p>
-                <strong>Клієнт:</strong> {booking.fullName}
-              </p>
-              <p>
-                <strong>Телефон:</strong> {booking.phoneNumber}
-              </p>
-              <p>
-                <strong>Процедури:</strong>
-              </p>
-              <ul className={s.procedureList}>
-                {booking.procedures.map((procedure, index) => (
-                  <li key={index} className={s.procedureItem}>
-                    <input type="checkbox" checked disabled />
-                    {procedure}
-                  </li>
-                ))}
-              </ul>
-              <p>
+              <div>
                 <strong>Час:</strong> {booking.time}
-              </p>
+              </div>
+              <div>
+                <strong>Клієнт:</strong> {booking.fullName}
+              </div>
+              <div>
+                <strong>Телефон:</strong> {booking.phoneNumber}
+              </div>
+
+              <div>
+                {booking.procedures.map((proc, index) => (
+                  <p key={index} className={s.procBookings}>
+                    Процедура:{proc.category}:{proc.procedure}
+                  </p>
+                ))}
+              </div>
+
               {booking.comment && (
-                <p>
+                <div>
                   <strong>Коментар:</strong> {booking.comment}
-                </p>
+                </div>
               )}
             </li>
           ))}
