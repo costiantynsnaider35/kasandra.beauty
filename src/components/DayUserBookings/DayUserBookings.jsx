@@ -282,11 +282,6 @@ const DayUserBookings = () => {
               ) : (
                 <>
                   <p>На {booking.time} є клієнт!</p>
-                  {/* {booking.procedures.map((proc, index) => (
-                    <p key={index}>
-                      {proc.category} - {proc.procedure}
-                    </p>
-                  ))} */}
                 </>
               )}
             </li>

@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start start;
   gap: 5px;
   padding: 10px;
   min-height: 100vh;
@@ -31,7 +31,12 @@
   font-weight: 500;
   margin-left: 3px;
 }
-
+.timeInput {
+  width: auto;
+  height: 20px;
+  margin-left: 3px;
+  border: none;
+}
 .bookingItem {
   display: flex;
   flex-direction: column;
@@ -74,4 +79,47 @@
   color: white;
   border: none;
   border-radius: 5px;
+}
+
+.timeEdit {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-top: 5px;
+}
+
+.editBtn,
+.delBtn,
+.updateBtn {
+  padding: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+  min-width: 120px;
+}
+
+.editBtn {
+  background-color: #0022ff;
+  color: white;
+}
+
+.delBtn {
+  background-color: #ff2200;
+  color: white;
+  margin-left: 75px;
+}
+
+.updateBtn {
+  background-color: #28a745;
+  color: white;
+  display: none;
+}
+
+.timeEdit.editing .editBtn {
+  display: none;
+}
+
+.timeEdit.editing .updateBtn {
+  display: inline-block;
 }

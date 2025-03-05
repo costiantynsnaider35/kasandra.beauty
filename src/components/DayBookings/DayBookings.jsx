@@ -5,10 +5,16 @@ import {
   addHoliday,
   deleteHoliday,
 } from "../../Firebase/firebaseHolidays.js";
-import { getBookingsByDate } from "../../Firebase/firebaseBookings.js";
+import {
+  deleteBooking,
+  findBookingByUidAndDate,
+  getBookingsByDate,
+  updateBooking,
+} from "../../Firebase/firebaseBookings.js";
 import dayjs from "dayjs";
 import "dayjs/locale/uk";
 import s from "./DayBookings.module.css";
+import { toast } from "react-hot-toast";
 
 dayjs.locale("uk");
 
@@ -17,6 +23,8 @@ const DayBookings = () => {
   const navigate = useNavigate();
   const [isNonWorking, setIsNonWorking] = useState(false);
   const [bookings, setBookings] = useState([]);
+  const [editingTimeId, setEditingTimeId] = useState(null);
+  const [newTime, setNewTime] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -43,7 +51,7 @@ const DayBookings = () => {
 
         setBookings(formattedBookings);
       } catch {
-        console.error;
+        console.error("Error fetching data");
       }
     };
     fetchData();
@@ -60,6 +68,79 @@ const DayBookings = () => {
     if (!isNonWorking) {
       await addHoliday(date);
       setIsNonWorking(true);
+    }
+  };
+
+  const handleEditTime = (bookingId, currentTime) => {
+    setEditingTimeId(bookingId);
+    setNewTime(currentTime);
+  };
+
+  const handleTimeChange = (e) => {
+    setNewTime(e.target.value);
+  };
+
+  const handleSubmitTime = async (bookingId) => {
+    const timeString = newTime.trim();
+    const timeRegex = /^([01]?[0-9]|2[0-3]):([0-5][0-9])$/;
+    if (!timeRegex.test(timeString)) {
+      toast.error("Невірний формат часу. Введіть час у форматі HH:mm!");
+      return;
+    }
+
+    const selectedTime = dayjs(`${date} ${timeString}`, "YYYY-MM-DD HH:mm");
+
+    if (!selectedTime.isValid()) {
+      toast.error("Невірний формат часу. Введіть час у форматі HH:mm!");
+      return;
+    }
+
+    const currentTime = dayjs();
+    if (selectedTime.isBefore(currentTime, "minute")) {
+      toast.error("Час не може бути в минулому!");
+      return;
+    }
+
+    const isTimeBooked = bookings.some(
+      (booking) => booking.time === newTime && booking.id !== bookingId
+    );
+    if (isTimeBooked) {
+      toast.error("Цей час вже зайнятий! Виберіть інший.");
+      return;
+    }
+
+    const updatedBooking = {
+      id: bookingId,
+      time: newTime,
+    };
+
+    try {
+      await updateBooking(bookingId, updatedBooking);
+
+      setBookings((prevBookings) =>
+        prevBookings.map((booking) =>
+          booking.id === bookingId ? { ...booking, time: newTime } : booking
+        )
+      );
+
+      setEditingTimeId(null);
+      setNewTime("");
+    } catch {
+      toast.error;
+    }
+  };
+  const handleDelete = async (id) => {
+    try {
+      const docId = await findBookingByUidAndDate(id);
+
+      if (docId) {
+        await deleteBooking(docId);
+        setBookings((prev) => prev.filter((booking) => booking.uid !== id));
+      } else {
+        toast.error;
+      }
+    } catch {
+      toast.error;
     }
   };
 
@@ -89,9 +170,23 @@ const DayBookings = () => {
             <li key={booking.id} className={s.bookingItem}>
               <div>
                 <p>
-                  Час:<span>{booking.time}</span>
+                  Час:
+                  {editingTimeId === booking.id ? (
+                    <input
+                      type="time"
+                      name="time"
+                      min="09:00"
+                      max="19:00"
+                      value={newTime}
+                      onChange={handleTimeChange}
+                      className={s.timeInput}
+                    />
+                  ) : (
+                    <span>{booking.time}</span>
+                  )}
                 </p>
               </div>
+
               <div>
                 <p>
                   Клієнт:<span>{booking.fullName}</span>
@@ -99,7 +194,10 @@ const DayBookings = () => {
               </div>
               <div>
                 <p>
-                  Телефон:<span>{booking.phoneNumber}</span>
+                  Телефон:
+                  <a href={`tel:${booking.phoneNumber}`}>
+                    {booking.phoneNumber}
+                  </a>
                 </p>
               </div>
 
@@ -126,6 +224,38 @@ const DayBookings = () => {
                   <strong>Коментар:</strong> {booking.comment}
                 </div>
               )}
+              <div
+                className={`${s.timeEdit} ${
+                  editingTimeId === booking.id ? s.editing : ""
+                }`}
+              >
+                {editingTimeId !== booking.id && (
+                  <button
+                    className={s.editBtn}
+                    onClick={() => handleEditTime(booking.id, booking.time)}
+                  >
+                    Редагувати
+                  </button>
+                )}
+
+                {editingTimeId === booking.id && (
+                  <button
+                    className={s.updateBtn}
+                    onClick={() => handleSubmitTime(booking.id)}
+                  >
+                    Оновити запис
+                  </button>
+                )}
+
+                <button
+                  className={s.delBtn}
+                  onClick={() => {
+                    handleDelete(booking.id);
+                  }}
+                >
+                  Видалити
+                </button>
+              </div>
             </li>
           ))}
         </ul>
