@@ -204,7 +204,7 @@ const DayUserBookings = () => {
         }
       }
     } catch {
-      toast.error("Помилка при збереженні запису!");
+      toast.error;
     }
 
     setFormData({
@@ -248,9 +248,20 @@ const DayUserBookings = () => {
               {booking.uid === userId ? (
                 <>
                   <p className={s.timeBookings}>Час: {booking.time}</p>
-                  {booking.procedures.map((proc, index) => (
-                    <p key={index} className={s.procBookings}>
-                      Процедура:{proc.category}:{proc.procedure}
+                  {Object.entries(
+                    booking.procedures.reduce(
+                      (acc, { category, procedure }) => {
+                        if (!acc[category]) {
+                          acc[category] = [];
+                        }
+                        acc[category].push(procedure);
+                        return acc;
+                      },
+                      {}
+                    )
+                  ).map(([category, procedures]) => (
+                    <p key={category} className={s.procBookings}>
+                      <strong>{category}:</strong> {procedures.join(", ")}
                     </p>
                   ))}
                   <div className={s.containerBtn}>
@@ -270,15 +281,12 @@ const DayUserBookings = () => {
                 </>
               ) : (
                 <>
-                  <p>
-                    <strong>{booking.fullName}</strong>
-                  </p>
-                  <p>Час: {booking.time}</p>
-                  {booking.procedures.map((proc, index) => (
+                  <p>На {booking.time} є клієнт!</p>
+                  {/* {booking.procedures.map((proc, index) => (
                     <p key={index}>
                       {proc.category} - {proc.procedure}
                     </p>
-                  ))}
+                  ))} */}
                 </>
               )}
             </li>

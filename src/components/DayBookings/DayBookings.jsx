@@ -26,17 +26,10 @@ const DayBookings = () => {
 
         const bookingsData = await getBookingsByDate(date);
 
-        // Добавляем логирование данных до и после их форматирования
-        console.log("Bookings Data:", bookingsData);
-
         const formattedBookings = bookingsData.map((booking) => {
-          // Логирование до форматирования
-
           const procedures = Array.isArray(booking.procedures)
             ? booking.procedures
-            : [booking.procedures]; // Исправлено на 'procedures'
-
-          // Логирование после обработки процедур
+            : [booking.procedures];
 
           return {
             id: booking.id,
@@ -49,8 +42,8 @@ const DayBookings = () => {
         });
 
         setBookings(formattedBookings);
-      } catch (error) {
-        console.error("Ошибка загрузки данных:", error);
+      } catch {
+        console.error;
       }
     };
     fetchData();
@@ -95,20 +88,36 @@ const DayBookings = () => {
           {bookings.map((booking) => (
             <li key={booking.id} className={s.bookingItem}>
               <div>
-                <strong>Час:</strong> {booking.time}
+                <p>
+                  Час:<span>{booking.time}</span>
+                </p>
               </div>
               <div>
-                <strong>Клієнт:</strong> {booking.fullName}
+                <p>
+                  Клієнт:<span>{booking.fullName}</span>
+                </p>
               </div>
               <div>
-                <strong>Телефон:</strong> {booking.phoneNumber}
+                <p>
+                  Телефон:<span>{booking.phoneNumber}</span>
+                </p>
               </div>
 
-              <div>
-                {booking.procedures.map((proc, index) => (
-                  <p key={index} className={s.procBookings}>
-                    Процедура:{proc.category}:{proc.procedure}
-                  </p>
+              <div className={s.procProcedures}>
+                {Object.entries(
+                  booking.procedures.reduce((acc, { category, procedure }) => {
+                    if (!acc[category]) {
+                      acc[category] = [];
+                    }
+                    acc[category].push(procedure);
+                    return acc;
+                  }, {})
+                ).map(([category, procedures]) => (
+                  <div key={category}>
+                    <p>
+                      {category}:<span>{procedures.join(", ")}</span>
+                    </p>
+                  </div>
                 ))}
               </div>
 
