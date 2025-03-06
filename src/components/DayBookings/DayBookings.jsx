@@ -7,16 +7,39 @@ import {
 } from "../../Firebase/firebaseHolidays.js";
 import {
   deleteBooking,
-  findBookingByUidAndDate,
   getBookingsByDate,
   updateBooking,
+  addBooking, // Добавим функцию для добавления новой записи
 } from "../../Firebase/firebaseBookings.js";
 import dayjs from "dayjs";
 import "dayjs/locale/uk";
 import s from "./DayBookings.module.css";
 import { toast } from "react-hot-toast";
+import { AnimatePresence, motion } from "framer-motion";
 
 dayjs.locale("uk");
+
+const proceduresList = [
+  {
+    category: "Манікюр",
+    options: [
+      "зняття від іншого майстра",
+      "корекція 1-го нігтя",
+      "френч",
+      "без покриття",
+      "з покриттям",
+      "корекція нарощених нігтів",
+      "нарощування",
+      "арт френч",
+      "чоловічий",
+    ],
+  },
+  {
+    category: "Педикюр",
+    options: ["чищення", "подологічний", "з покриттям", "чоловічий"],
+  },
+  { category: "Брови", options: ["корекція воском", "корекція з фарбуванням"] },
+];
 
 const DayBookings = () => {
   const { date } = useParams();
@@ -25,6 +48,13 @@ const DayBookings = () => {
   const [bookings, setBookings] = useState([]);
   const [editingTimeId, setEditingTimeId] = useState(null);
   const [newTime, setNewTime] = useState("");
+  const [openIndex, setOpenIndex] = useState(null);
+  const [formData, setFormData] = useState({
+    fullName: "",
+    phoneNumber: "",
+    procedures: [],
+    time: "",
+  });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -129,19 +159,99 @@ const DayBookings = () => {
       toast.error;
     }
   };
-  const handleDelete = async (id) => {
-    try {
-      const docId = await findBookingByUidAndDate(id);
 
-      if (docId) {
-        await deleteBooking(docId);
-        setBookings((prev) => prev.filter((booking) => booking.uid !== id));
-      } else {
-        toast.error;
-      }
+  const handleDelete = async (bookingId) => {
+    try {
+      await deleteBooking(bookingId); // Удаляем запись из Firestore
+
+      setBookings((prevBookings) =>
+        prevBookings.filter((booking) => booking.id !== bookingId)
+      );
     } catch {
       toast.error;
     }
+  };
+
+  // Обработчик изменения данных формы
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  // Обработчик отправки формы
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (
+      !formData.fullName ||
+      formData.procedures.length === 0 ||
+      !formData.time
+    ) {
+      toast.error("Заповніть всі обов’язкові поля!");
+      return;
+    }
+
+    const timeString = formData.time.trim();
+    const timeRegex = /^([01]?[0-9]|2[0-3]):([0-5][0-9])$/;
+    if (!timeRegex.test(timeString)) {
+      toast.error("Невірний формат часу. Введіть час у форматі HH:mm!");
+      return;
+    }
+
+    const selectedTime = dayjs(`${date} ${timeString}`, "YYYY-MM-DD HH:mm");
+
+    if (!selectedTime.isValid()) {
+      toast.error("Невірний формат часу. Введіть час у форматі HH:mm!");
+      return;
+    }
+
+    const currentTime = dayjs();
+    if (selectedTime.isBefore(currentTime, "minute")) {
+      toast.error("Час не може бути в минулому!");
+      return;
+    }
+
+    const isTimeBooked = bookings.some(
+      (booking) => booking.time === formData.time
+    );
+    if (isTimeBooked) {
+      toast.error("Цей час вже зайнятий! Виберіть інший.");
+      return;
+    }
+
+    const newBooking = { ...formData, date };
+
+    try {
+      await addBooking(newBooking);
+
+      setBookings((prevBookings) => [
+        ...prevBookings,
+        { ...newBooking, id: Date.now() }, // добавляем запись в локальный список
+      ]);
+
+      setFormData({
+        fullName: "",
+        phoneNumber: "",
+        procedures: [],
+        time: "",
+        comment: "",
+      });
+    } catch {
+      toast.error;
+    }
+  };
+  const handleCheckboxChange = (category, procedure) => (event) => {
+    const isChecked = event.target.checked;
+    setFormData((prevData) => {
+      const updatedProcedures = isChecked
+        ? [...prevData.procedures, { category, procedure }]
+        : prevData.procedures.filter((p) => p.procedure !== procedure);
+
+      return { ...prevData, procedures: updatedProcedures };
+    });
   };
 
   return (
@@ -150,13 +260,17 @@ const DayBookings = () => {
 
       <div className={s.buttonGroup}>
         <button
-          className={`${s.button} ${!isNonWorking ? s.working : ""}`}
+          className={`${s.buttonAdminWork} ${
+            !isNonWorking ? s.buttonAdminWorking : ""
+          }`}
           onClick={handleSetWorkingDay}
         >
           Робочий день
         </button>
         <button
-          className={`${s.button} ${isNonWorking ? s.nonWorking : ""}`}
+          className={`${s.buttonAdminWork} ${
+            isNonWorking ? s.buttonAdminNonWorking : ""
+          }`}
           onClick={handleSetNonWorkingDay}
         >
           Не робочий день
@@ -262,8 +376,88 @@ const DayBookings = () => {
       ) : (
         <p>Записів немає</p>
       )}
-
-      <button className={s.backButton} onClick={() => navigate("/admin")}>
+      <form className={s.adminForm} onSubmit={handleSubmit}>
+        <label className={s.adminFormLabel}>
+          Ім’я та прізвище*:
+          <input
+            type="text"
+            name="fullName"
+            value={formData.fullName}
+            onChange={handleChange}
+            required
+            className={s.adminFormInput}
+          />
+        </label>
+        <label className={s.adminFormLabel}>
+          Номер телефону*:
+          <input
+            type="tel"
+            name="phoneNumber"
+            value={formData.phoneNumber}
+            onChange={handleChange}
+            required
+            className={s.adminFormInput}
+          />
+        </label>
+        {proceduresList.map((category, index) => (
+          <div key={index}>
+            <div
+              className={s.accordionAdminHeader}
+              onClick={() => setOpenIndex(openIndex === index ? null : index)}
+            >
+              <strong className={s.categoryAdminTitle}>
+                {category.category}
+              </strong>
+            </div>
+            <AnimatePresence>
+              {openIndex === index && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  {category.options.map((option) => (
+                    <label key={option} className={s.procedureAdminItem}>
+                      <input
+                        type="checkbox"
+                        name="procedures"
+                        value={option}
+                        checked={formData.procedures.some(
+                          (p) => p.procedure === option
+                        )}
+                        onChange={handleCheckboxChange(
+                          category.category,
+                          option
+                        )}
+                        className={s.procedureAdminCheckbox}
+                      />
+                      {option}
+                    </label>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        ))}
+        <label className={s.timeAdminLabel}>
+          Час*:
+          <input
+            type="time"
+            name="time"
+            value={formData.time}
+            onChange={handleChange}
+            required
+            className={s.timeAdminInput}
+            min="09:00"
+            max="19:00"
+          />
+        </label>
+        <button type="submit" className={s.addAdminBtn}>
+          Записати
+        </button>
+      </form>
+      <button className={s.backAdminBtn} onClick={() => navigate(-1)}>
         Назад
       </button>
     </div>

@@ -35,8 +35,19 @@
   width: auto;
   height: 20px;
   margin-left: 3px;
-  border: none;
+  padding: 5px;
+  border-radius: 30px;
+  border: 1px solid;
+  transition: border 0.3s ease;
+  outline: none;
+  font-size: 15px;
 }
+.timeInput:hover,
+.timeInput:active,
+.timeInput:focus {
+  border: 1px solid #0fd568;
+}
+
 .bookingItem {
   display: flex;
   flex-direction: column;
@@ -52,7 +63,7 @@
   flex-direction: column;
 }
 
-.button {
+.buttonAdminWork {
   padding: 10px 20px;
   font-size: 16px;
   cursor: pointer;
@@ -60,17 +71,17 @@
   border-radius: 5px;
 }
 
-.working {
+.buttonAdminWorking {
   background-color: green;
   color: white;
 }
 
-.nonWorking {
+.buttonAdminNonWorking {
   background-color: red;
   color: white;
 }
 
-.backButton {
+.backAdminBtn {
   margin-top: 10px;
   padding: 10px 20px;
   font-size: 16px;
@@ -122,4 +133,99 @@
 
 .timeEdit.editing .updateBtn {
   display: inline-block;
+}
+.adminForm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+.adminFormLabel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 500;
+}
+.adminFormInput {
+  width: 300px;
+  height: 30px;
+  font-size: 16px;
+  font-weight: 500;
+  border-radius: 30px;
+  border: 1px solid #090a0a;
+  padding: 15px;
+  transition: border 0.3s ease;
+  outline: none;
+}
+.adminFormInput:hover,
+.adminFormInput:active,
+.adminFormInput:focus {
+  border: 1px solid #0fd568;
+}
+.accordionAdminHeader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.categoryAdminTitle {
+  font-size: 25px;
+  font-weight: 500;
+}
+
+.procedureAdminItem {
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  font-weight: 500;
+  gap: 10px;
+  margin-top: 5px;
+}
+.procedureAdminCheckbox {
+  height: 25px;
+  width: 25px;
+  transition: border 0.3s ease;
+  outline: none;
+}
+.procedureAdminCheckbox:hover,
+.procedureAdminCheckbox:active,
+.procedureAdminCheckbox:focus {
+  border: 1px solid #0fd568;
+}
+.timeAdminLabel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 500;
+}
+.timeAdminInput {
+  width: 150px;
+  height: 30px;
+  font-size: 16px;
+  font-weight: 500;
+  border-radius: 30px;
+  border: 1px solid;
+  padding: 15px;
+  transition: border 0.3s ease;
+  outline: none;
+}
+.timeAdminInput:hover,
+.timeAdminInput:active,
+.timeAdminInput:focus {
+  border: 1px solid #0fd568;
+}
+.addAdminBtn {
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: #046b26;
+  color: white;
+  border: none;
+  border-radius: 5px;
 }

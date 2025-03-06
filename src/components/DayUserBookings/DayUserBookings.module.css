@@ -83,14 +83,6 @@
 .formInput:hover {
   border: 1px aqua;
 }
-
-.procedureCategory {
-  width: 320px;
-}
-.categoryProc {
-  font-size: 20px;
-  font-weight: 700;
-}
 .procedureItem {
   display: flex;
   align-items: center;
