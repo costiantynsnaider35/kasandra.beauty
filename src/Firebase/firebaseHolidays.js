@@ -10,7 +10,7 @@ import {
 import { getAuth } from "firebase/auth";
 
 // 🔥 Функция проверки, является ли пользователь админом
-const checkAdminPermissions = async () => {
+export const checkAdminPermissions = async () => {
   const auth = getAuth();
   const user = auth.currentUser;
   if (!user) throw new Error("Пользователь не авторизован");

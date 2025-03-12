@@ -16,6 +16,7 @@ import "dayjs/locale/uk";
 import s from "./DayBookings.module.css";
 import { toast } from "react-hot-toast";
 import { AnimatePresence, motion } from "framer-motion";
+import { addBreak, getBreaks } from "../../Firebase/firebaseBreaks.js";
 
 dayjs.locale("uk");
 
@@ -55,6 +56,8 @@ const DayBookings = () => {
     procedures: [],
     time: "",
   });
+  const [breakTime, setBreakTime] = useState({ start: "", end: "" });
+  const [breaks, setBreaks] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -86,6 +89,15 @@ const DayBookings = () => {
     };
     fetchData();
   }, [date]);
+
+  useEffect(() => {
+    const fetchBreaks = async () => {
+      const breaksList = await getBreaks();
+      setBreaks(breaksList);
+    };
+
+    fetchBreaks();
+  }, []);
 
   const handleSetWorkingDay = async () => {
     if (isNonWorking) {
@@ -162,7 +174,7 @@ const DayBookings = () => {
 
   const handleDelete = async (bookingId) => {
     try {
-      await deleteBooking(bookingId); // Удаляем запись из Firestore
+      await deleteBooking(bookingId);
 
       setBookings((prevBookings) =>
         prevBookings.filter((booking) => booking.id !== bookingId)
@@ -172,7 +184,6 @@ const DayBookings = () => {
     }
   };
 
-  // Обработчик изменения данных формы
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -181,7 +192,6 @@ const DayBookings = () => {
     }));
   };
 
-  // Обработчик отправки формы
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -254,6 +264,26 @@ const DayBookings = () => {
     });
   };
 
+  const handleBreakTimeChange = (e) => {
+    const { name, value } = e.target;
+    setBreakTime((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSetBreak = async (e) => {
+    e.preventDefault();
+    if (!breakTime.start || !breakTime.end) {
+      toast.error("Заповніть обидва поля часу для перерви!");
+      return;
+    }
+    try {
+      await addBreak(breakTime);
+      setBreaks((prev) => [...prev, breakTime]);
+      toast.success("Перерва встановлена!");
+    } catch {
+      toast.error("Помилка при встановленні перерви");
+    }
+  };
+
   return (
     <div className={s.dayContainer}>
       <h2>{dayjs(date).format("DD MMMM YYYY")}</h2>
@@ -276,7 +306,63 @@ const DayBookings = () => {
           Не робочий день
         </button>
       </div>
+      <div className={s.breakContainer}>
+        <h3>Перерва</h3>
+        <form className={s.formBreak} onSubmit={handleSetBreak}>
+          <div className={s.breakTimeContainer}>
+            <label className={s.timeBreak}>
+              З:
+              <input
+                type="time"
+                name="start"
+                value={breakTime.start}
+                onChange={handleBreakTimeChange}
+                required
+                className={s.timeBreakInput}
+              />
+            </label>
+            <label className={s.timeBreak}>
+              До:
+              <input
+                type="time"
+                name="end"
+                value={breakTime.end}
+                onChange={handleBreakTimeChange}
+                required
+                className={s.timeBreakInput}
+              />
+            </label>
+          </div>
 
+          <button
+            type="submit"
+            className={s.breakAddBtn}
+            onClick={handleSetBreak}
+          >
+            Втановити перерву
+          </button>
+          <button
+            type="submit"
+            className={s.breakDelBtn}
+            onClick={handleSetBreak}
+          >
+            Видалити перерву
+          </button>
+        </form>
+        {breaks.length > 0 && (
+          <ul>
+            {breaks.map(
+              (breakItem, index) =>
+                breakItem.start &&
+                breakItem.end && (
+                  <li key={index}>
+                    Перерва з {breakItem.start} до {breakItem.end}
+                  </li>
+                )
+            )}
+          </ul>
+        )}
+      </div>
       <h3>Список клієнтів на сьогодні:</h3>
       {bookings.length > 0 ? (
         <ul className={s.bookingList}>
@@ -449,8 +535,6 @@ const DayBookings = () => {
             onChange={handleChange}
             required
             className={s.timeAdminInput}
-            min="09:00"
-            max="19:00"
           />
         </label>
         <button type="submit" className={s.addAdminBtn}>
