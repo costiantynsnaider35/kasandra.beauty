@@ -41,14 +41,18 @@ export const addBooking = async (booking) => {
     const user = auth.currentUser;
     if (!user) throw new Error("Користувач не авторизований!");
 
-    const existingBooking = await findBookingByUidAndDate(
-      user.uid,
-      booking.date
-    );
-    if (existingBooking) {
-      throw new Error(
-        "У вас вже є запис на цей день. Ви можете редагувати його!"
+    const admin = await isAdmin(user.uid);
+
+    if (!admin) {
+      const existingBooking = await findBookingByUidAndDate(
+        user.uid,
+        booking.date
       );
+      if (existingBooking) {
+        throw new Error(
+          "У вас вже є запис на цей день. Ви можете редагувати його!"
+        );
+      }
     }
 
     const bookingsForDate = await getBookingsByDate(booking.date);
@@ -98,21 +102,11 @@ const canUserModifyBooking = async (bookingId) => {
 
 export const updateBooking = async (id, updatedBooking) => {
   try {
-    if (!id || !updatedBooking) {
-      throw new Error("Невірні дані для оновлення запису!");
-    }
-
-    // Проверка прав пользователя
-    if (!(await canUserModifyBooking(id))) {
-      throw new Error("Недостатньо прав для оновлення!");
-    }
-
-    // Обновление данных
-    await updateDoc(doc(db, "bookings", id), updatedBooking);
-
-    toast.success("Запис до майстра успішно оновлено!");
+    const bookingRef = doc(db, "bookings", id);
+    await updateDoc(bookingRef, updatedBooking);
+    toast.success("Запис успішно оновлено!");
   } catch (error) {
-    toast.error(error.message || "Помилка оновлення запису до майстра!"); // Логируем ошибку для отладки
+    toast.error("Помилка при оновленні запису");
     throw new Error(error.message);
   }
 };

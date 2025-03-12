@@ -14,6 +14,7 @@ import {
   findBookingByUidAndDate,
 } from "../../Firebase/firebaseBookings.js";
 import { checkAuthState } from "../../Firebase/firebaseService.js";
+import { getBreaks } from "../../Firebase/firebaseBreaks.js";
 import s from "./DayUserBookings.module.css";
 
 dayjs.locale("uk");
@@ -24,9 +25,7 @@ const proceduresList = [
   {
     category: "Манікюр",
     options: [
-      "зняття від іншого майстра",
       "корекція 1-го нігтя",
-      "френч",
       "без покриття",
       "з покриттям",
       "корекція нарощених нігтів",
@@ -42,6 +41,28 @@ const proceduresList = [
   { category: "Брови", options: ["корекція воском", "корекція з фарбуванням"] },
 ];
 
+const procedureDurations = {
+  Манікюр: {
+    "корекція 1-го нігтя": 40,
+    "без покриття": 60,
+    "з покриттям": 120,
+    "корекція нарощених нігтів": 210,
+    нарощування: 210,
+    "арт френч": 420,
+    чоловічий: 60,
+  },
+  Педикюр: {
+    чищення: 60,
+    подологічний: 60,
+    "з покриттям": 120,
+    чоловічий: 60,
+  },
+  Брови: {
+    "корекція воском": 30,
+    "корекція з фарбуванням": 60,
+  },
+};
+
 const DayUserBookings = () => {
   const { date } = useParams();
   const navigate = useNavigate();
@@ -50,6 +71,7 @@ const DayUserBookings = () => {
   const formattedDate = selectedDate.format("YYYY-MM-DD");
   const displayDate = selectedDate.format("D MMMM");
   const [bookings, setBookings] = useState([]);
+  const [breaks, setBreaks] = useState([]);
   const [formData, setFormData] = useState({
     fullName: "",
     phoneNumber: "",
@@ -59,6 +81,28 @@ const DayUserBookings = () => {
   });
   const [openIndex, setOpenIndex] = useState(null);
   const [editingBookingId, setEditingBookingId] = useState(null);
+  const combinedList = [
+    ...bookings.map((booking) => ({
+      type: "booking",
+      id: booking.uid,
+      startTime: dayjs(`${formattedDate} ${booking.time}`, "YYYY-MM-DD HH:mm"),
+      endTime: dayjs(
+        `${formattedDate} ${booking.time}`,
+        "YYYY-MM-DD HH:mm"
+      ).add(booking.duration, "minute"),
+      data: booking,
+    })),
+    ...breaks.map((breakItem) => ({
+      type: "break",
+      id: breakItem.id,
+      startTime: dayjs(
+        `${formattedDate} ${breakItem.start}`,
+        "YYYY-MM-DD HH:mm"
+      ),
+      endTime: dayjs(`${formattedDate} ${breakItem.end}`, "YYYY-MM-DD HH:mm"),
+      data: breakItem,
+    })),
+  ].sort((a, b) => a.startTime - b.startTime);
 
   useEffect(() => {
     checkAuthState((user) => {
@@ -73,6 +117,15 @@ const DayUserBookings = () => {
     };
     fetchBookings();
   }, [formattedDate, date]);
+
+  useEffect(() => {
+    const fetchBreaks = async () => {
+      const breaksList = await getBreaks();
+      setBreaks(breaksList);
+    };
+
+    fetchBreaks();
+  }, []);
 
   useEffect(() => {
     if (editingBookingId) {
@@ -167,17 +220,73 @@ const DayUserBookings = () => {
       }
     }
 
-    // Проверка, занято ли время
-    const isTimeBooked = bookings.some(
-      (booking) =>
-        booking.time === formData.time && booking.uid !== editingBookingId
+    // Вычисление времени окончания процедуры
+    const totalDuration = formData.procedures.reduce(
+      (acc, { category, procedure }) => {
+        return acc + (procedureDurations[category][procedure] || 0);
+      },
+      0
     );
+    const endTimeProcedure = selectedTime.add(totalDuration, "minute");
+
+    // Проверка конфликтов с существующими записями
+    const isTimeBooked = bookings.some((booking) => {
+      if (booking.uid === editingBookingId) return false;
+
+      const bookingStart = dayjs(
+        `${formattedDate} ${booking.time}`,
+        "YYYY-MM-DD HH:mm"
+      );
+      const bookingEnd = bookingStart.add(booking.duration, "minute");
+
+      return (
+        (selectedTime.isSameOrAfter(bookingStart) &&
+          selectedTime.isBefore(bookingEnd)) ||
+        (endTimeProcedure.isAfter(bookingStart) &&
+          endTimeProcedure.isSameOrBefore(bookingEnd)) ||
+        (selectedTime.isSameOrBefore(bookingStart) &&
+          endTimeProcedure.isSameOrAfter(bookingEnd))
+      );
+    });
+
     if (isTimeBooked) {
-      toast.error("Цей час вже зайнятий! Виберіть інший.");
+      toast.error("Цей час перетинається з іншим записом! Виберіть інший час.");
       return;
     }
 
-    const newBooking = { ...formData, date: formattedDate, uid: userId };
+    // Проверка пересечения с перерывами
+    const isTimeInBreak = breaks.some((breakItem) => {
+      const breakStart = dayjs(
+        `${formattedDate} ${breakItem.start}`,
+        "YYYY-MM-DD HH:mm"
+      );
+      const breakEnd = dayjs(
+        `${formattedDate} ${breakItem.end}`,
+        "YYYY-MM-DD HH:mm"
+      );
+
+      return (
+        (selectedTime.isSameOrAfter(breakStart) &&
+          selectedTime.isBefore(breakEnd)) ||
+        (endTimeProcedure.isAfter(breakStart) &&
+          endTimeProcedure.isSameOrBefore(breakEnd)) ||
+        (selectedTime.isSameOrBefore(breakStart) &&
+          endTimeProcedure.isSameOrAfter(breakEnd))
+      );
+    });
+
+    if (isTimeInBreak) {
+      toast.error("Запис перетинається з перервою! Виберіть інший час.");
+      return;
+    }
+
+    const newBooking = {
+      ...formData,
+      date: formattedDate,
+      uid: userId,
+      duration: totalDuration,
+      endTime: endTimeProcedure.format("HH:mm"), // Добавляем время окончания
+    };
 
     try {
       if (editingBookingId) {
@@ -189,6 +298,8 @@ const DayUserBookings = () => {
           ...formData,
           date: formattedDate,
           uid: userId,
+          duration: totalDuration,
+          endTime: endTimeProcedure.format("HH:mm"), // Добавляем время окончания
         };
         await updateBooking(docId, updatedBooking);
 
@@ -241,51 +352,69 @@ const DayUserBookings = () => {
   return (
     <div className={s.container}>
       <h2>Записи на {displayDate}</h2>
-      {bookings.length > 0 ? (
+      {combinedList.length > 0 ? (
         <ul className={s.bookingList}>
-          {bookings.map((booking) => (
-            <li key={booking.uid} className={s.bookingItem}>
-              {booking.uid === userId ? (
-                <>
-                  <p className={s.timeBookings}>Час: {booking.time}</p>
-                  {Object.entries(
-                    booking.procedures.reduce(
-                      (acc, { category, procedure }) => {
-                        if (!acc[category]) {
-                          acc[category] = [];
-                        }
-                        acc[category].push(procedure);
-                        return acc;
-                      },
-                      {}
-                    )
-                  ).map(([category, procedures]) => (
-                    <p key={category} className={s.procBookings}>
-                      <strong>{category}:</strong> {procedures.join(", ")}
+          {combinedList.map((item) => {
+            if (item.type === "booking") {
+              const { data: booking } = item;
+              return (
+                <li key={booking.uid} className={s.bookingItem}>
+                  {booking.uid === userId ? (
+                    <>
+                      <p className={s.timeBookings}>
+                        Час: ~{booking.time} - {item.endTime.format("HH:mm")}
+                      </p>
+                      {Object.entries(
+                        booking.procedures.reduce(
+                          (acc, { category, procedure }) => {
+                            if (!acc[category]) {
+                              acc[category] = [];
+                            }
+                            acc[category].push(procedure);
+                            return acc;
+                          },
+                          {}
+                        )
+                      ).map(([category, procedures]) => (
+                        <p key={category} className={s.procBookings}>
+                          <strong>{category}:</strong> {procedures.join(", ")}
+                        </p>
+                      ))}
+                      <div className={s.containerBtn}>
+                        <button
+                          className={s.regBtn}
+                          onClick={() => handleEdit(booking.uid)}
+                        >
+                          Редагувати
+                        </button>
+                        <button
+                          className={s.delBtn}
+                          onClick={() =>
+                            handleDelete(booking.uid, booking.date)
+                          }
+                        >
+                          Видалити
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    <p className={s.timeBookings}>
+                      З {booking.time} до {item.endTime.format("HH:mm")} є
+                      клієнт!
                     </p>
-                  ))}
-                  <div className={s.containerBtn}>
-                    <button
-                      className={s.regBtn}
-                      onClick={() => handleEdit(booking.uid)}
-                    >
-                      Редагувати
-                    </button>
-                    <button
-                      className={s.delBtn}
-                      onClick={() => handleDelete(booking.uid, booking.date)}
-                    >
-                      Видалити
-                    </button>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <p>На {booking.time} є клієнт!</p>
-                </>
-              )}
-            </li>
-          ))}
+                  )}
+                </li>
+              );
+            } else if (item.type === "break") {
+              const { data: breakItem } = item;
+              return (
+                <li key={breakItem.id} className={s.bookingItem}>
+                  Перерва з {breakItem.start} до {breakItem.end}
+                </li>
+              );
+            }
+            return null;
+          })}
         </ul>
       ) : (
         <p>Немає записів</p>
