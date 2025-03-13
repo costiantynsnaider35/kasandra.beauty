@@ -69,6 +69,7 @@
   cursor: pointer;
   border: none;
   border-radius: 5px;
+  transition: background-color 0.3s ease;
 }
 
 .buttonAdminWorking {
@@ -90,6 +91,7 @@
   color: white;
   border: none;
   border-radius: 5px;
+  transition: background-color 0.3s ease;
 }
 
 .timeEdit {
@@ -228,6 +230,7 @@
   color: white;
   border: none;
   border-radius: 5px;
+  transition: background-color 0.3s ease;
 }
 .breakContainer {
   display: flex;
@@ -279,6 +282,7 @@
   color: white;
   border: none;
   border-radius: 5px;
+  transition: background-color 0.3s ease;
 }
 .breakDelBtn {
   padding: 5px;
@@ -288,6 +292,7 @@
   color: white;
   border: none;
   border-radius: 5px;
+  transition: background-color 0.3s ease;
 }
 
 .breakList {

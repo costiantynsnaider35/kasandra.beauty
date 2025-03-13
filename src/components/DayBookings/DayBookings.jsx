@@ -221,9 +221,8 @@ const DayBookings = () => {
 
   const handleDelete = async (bookingId) => {
     try {
-      // Приводим bookingId к строке для уверенности, что передаём корректное значение
       const bookingIdStr = String(bookingId);
-      // Проверяем существование записи
+
       const bookingToDelete = bookings.find(
         (booking) => String(booking.id) === bookingIdStr
       );
@@ -232,10 +231,8 @@ const DayBookings = () => {
         return;
       }
 
-      // Удаляем из Firebase, передавая id в виде строки
       await deleteBooking(bookingIdStr);
 
-      // Обновляем UI, фильтруя по строковому id
       setBookings((prevBookings) =>
         prevBookings.filter((booking) => String(booking.id) !== bookingIdStr)
       );
@@ -287,7 +284,6 @@ const DayBookings = () => {
       return;
     }
 
-    // Вычисление времени окончания процедуры
     const totalDuration = formData.procedures.reduce(
       (acc, { category, procedure }) => {
         return acc + (procedureDurations[category][procedure] || 0);
@@ -296,7 +292,6 @@ const DayBookings = () => {
     );
     const endTime = selectedTime.add(totalDuration, "minute");
 
-    // Проверка занятости времени
     const isTimeBooked = bookings.some((booking) => {
       const bookingStartTime = dayjs(
         `${date} ${booking.time}`,
@@ -316,7 +311,6 @@ const DayBookings = () => {
     const newBooking = { ...formData, date, duration: totalDuration };
 
     try {
-      // Получаем объект записи, содержащий id, сгенерированный Firebase
       const createdBooking = await addBooking(newBooking);
 
       setBookings((prevBookings) => [...prevBookings, createdBooking]);
@@ -366,12 +360,11 @@ const DayBookings = () => {
 
   const handleDeleteBreak = async (breakId) => {
     try {
-      console.log("Attempting to delete break with ID:", breakId); // Добавьте лог для отладки
       await deleteBreak(breakId);
       setBreaks((prev) => prev.filter((breakItem) => breakItem.id !== breakId));
       toast.success("Перерва видалена!");
     } catch (error) {
-      console.error("Error deleting break:", error); // Добавьте лог для отладки
+      console.error("Error deleting break:", error);
       toast.error("Помилка при видаленні перерви");
     }
   };

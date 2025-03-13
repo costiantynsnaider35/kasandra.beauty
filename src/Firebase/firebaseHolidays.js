@@ -9,7 +9,6 @@ import {
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
-// 🔥 Функция проверки, является ли пользователь админом
 export const checkAdminPermissions = async () => {
   const auth = getAuth();
   const user = auth.currentUser;
@@ -23,7 +22,6 @@ export const checkAdminPermissions = async () => {
   }
 };
 
-// 🔥 Получение списка выходных дней
 export const getHolidays = async () => {
   try {
     const querySnapshot = await getDocs(collection(db, "holidays"));
@@ -34,7 +32,6 @@ export const getHolidays = async () => {
   }
 };
 
-// 🔥 Добавление выходного дня (только для админов)
 export const addHoliday = async (date) => {
   try {
     await checkAdminPermissions();
@@ -42,11 +39,10 @@ export const addHoliday = async (date) => {
     await setDoc(holidayRef, { date });
   } catch (error) {
     console.error("Ошибка при добавлении выходного дня:", error);
-    throw error; // Для обработки в UI
+    throw error;
   }
 };
 
-// 🔥 Удаление выходного дня (только для админов)
 export const deleteHoliday = async (date) => {
   try {
     await checkAdminPermissions();

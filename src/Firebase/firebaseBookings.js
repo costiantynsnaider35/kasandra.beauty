@@ -16,7 +16,7 @@ export const getBookingsByDate = async (date) => {
   try {
     const allDocs = await getDocs(collection(db, "bookings"));
     const filteredDocs = allDocs.docs
-      .map((doc) => ({ id: doc.id, ...doc.data() })) // doc.id — строка
+      .map((doc) => ({ id: doc.id, ...doc.data() }))
       .filter((booking) => booking.date === date);
     return filteredDocs;
   } catch {
@@ -29,7 +29,7 @@ export const getAllBookingDates = async () => {
   try {
     const allDocs = await getDocs(collection(db, "bookings"));
     const dates = allDocs.docs.map((doc) => doc.data().date);
-    return [...new Set(dates)]; // Убираем дубли
+    return [...new Set(dates)];
   } catch (error) {
     console.error("Помилка отримання дат записів:", error);
     return [];
@@ -68,7 +68,6 @@ export const addBooking = async (booking) => {
     });
 
     toast.success("Ви успішно записались до майстра!");
-    // Возвращаем именно Firestore сгенерированный id (строка!)
     return { id: docRef.id, ...booking, uid: user.uid };
   } catch (error) {
     toast.error(
@@ -97,38 +96,27 @@ export const updateBooking = async (id, updatedBooking) => {
 };
 
 const canUserModifyBooking = async (bookingId) => {
-  console.log("Переданный bookingId:", bookingId, "typeof:", typeof bookingId);
   const user = auth.currentUser;
   if (!user) throw new Error("Користувач не авторизований!");
 
-  // Приводим bookingId к строке
   const bookingRef = doc(db, "bookings", String(bookingId));
   const bookingSnap = await getDoc(bookingRef);
 
   if (!bookingSnap.exists()) throw new Error("Запис не знайдений!");
 
   const bookingData = bookingSnap.data();
-  console.log(
-    "bookingData.uid:",
-    bookingData.uid,
-    "typeof:",
-    typeof bookingData.uid
-  );
 
   const admin = await isAdmin(user.uid);
 
-  // Приводим uid к строке для корректного сравнения
   return admin || String(bookingData.uid) === String(user.uid);
 };
 
 export const deleteBooking = async (id) => {
-  console.log("deleteBooking вызывается с id:", id, "typeof:", typeof id);
   try {
     if (!id) {
       throw new Error("ID записи не указан");
     }
 
-    // Если id не строка, приведём его к строке
     const bookingIdStr = String(id);
     const canModify = await canUserModifyBooking(bookingIdStr);
     if (!canModify) {

@@ -6,7 +6,7 @@ import { FaCircleArrowLeft, FaCircleArrowRight } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 import Logout from "../Logout/Logout";
 import { getHolidays } from "../../Firebase/firebaseHolidays.js";
-import { getAllBookingDates } from "../../Firebase/firebaseBookings.js"; // Функция получения всех дат с записями
+import { getAllBookingDates } from "../../Firebase/firebaseBookings.js";
 import toast from "react-hot-toast";
 
 dayjs.locale("uk");
@@ -14,7 +14,7 @@ dayjs.locale("uk");
 const BookingsAdmine = () => {
   const [currentDate, setCurrentDate] = useState(dayjs());
   const [holidays, setHolidays] = useState([]);
-  const [bookedDates, setBookedDates] = useState([]); // Храним даты с записями
+  const [bookedDates, setBookedDates] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -23,7 +23,7 @@ const BookingsAdmine = () => {
         const holidayDates = await getHolidays();
         setHolidays(holidayDates);
 
-        const bookingDates = await getAllBookingDates(); // Загружаем даты с записями
+        const bookingDates = await getAllBookingDates();
         setBookedDates(bookingDates);
       } catch {
         toast.error("Не вдалося отримати дані. Спробуйте пізніше.");
@@ -72,7 +72,7 @@ const BookingsAdmine = () => {
           const formattedDate = day.format("YYYY-MM-DD");
           const isNonWorking = holidays.includes(formattedDate);
           const isToday = day.isSame(dayjs(), "day");
-          const isBooked = bookedDates.includes(formattedDate); // Проверяем, есть ли запись
+          const isBooked = bookedDates.includes(formattedDate);
 
           return (
             <div

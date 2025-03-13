@@ -160,7 +160,6 @@ const DayUserBookings = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("FormData перед отправкой:", formData);
 
     if (
       !formData.fullName ||
@@ -196,8 +195,7 @@ const DayUserBookings = () => {
     const startTime = dayjs(`${formattedDate} 09:00`, "YYYY-MM-DD HH:mm");
     const endTime = dayjs(`${formattedDate} 19:00`, "YYYY-MM-DD HH:mm");
 
-    // Проверка на время в прошлом
-    const currentTime = dayjs(); // Текущее время
+    const currentTime = dayjs();
     if (selectedTime.isBefore(currentTime, "minute")) {
       toast.error("Час не може бути в минулому!");
       return;
@@ -214,14 +212,12 @@ const DayUserBookings = () => {
     if (editingBookingId) {
       const editingBookingTime = dayjs(formData.time, "HH:mm");
 
-      // Дополнительная проверка для редактирования
       if (editingBookingTime.isBefore(currentTime, "minute")) {
         toast.error("Час не може бути в минулому для оновлення запису!");
         return;
       }
     }
 
-    // Вычисление времени окончания процедуры
     const totalDuration = formData.procedures.reduce(
       (acc, { category, procedure }) => {
         return acc + (procedureDurations[category][procedure] || 0);
@@ -230,7 +226,6 @@ const DayUserBookings = () => {
     );
     const endTimeProcedure = selectedTime.add(totalDuration, "minute");
 
-    // Проверка конфликтов с существующими записями
     const isTimeBooked = bookings.some((booking) => {
       if (booking.uid === editingBookingId) return false;
 
@@ -255,7 +250,6 @@ const DayUserBookings = () => {
       return;
     }
 
-    // Проверка пересечения с перерывами
     const isTimeInBreak = breaks.some((breakItem) => {
       const breakStart = dayjs(
         `${formattedDate} ${breakItem.start}`,
@@ -286,7 +280,7 @@ const DayUserBookings = () => {
       date: formattedDate,
       uid: userId,
       duration: totalDuration,
-      endTime: endTimeProcedure.format("HH:mm"), // Добавляем время окончания
+      endTime: endTimeProcedure.format("HH:mm"),
     };
 
     try {
