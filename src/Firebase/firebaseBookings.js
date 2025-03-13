@@ -16,7 +16,7 @@ export const getBookingsByDate = async (date) => {
   try {
     const allDocs = await getDocs(collection(db, "bookings"));
     const filteredDocs = allDocs.docs
-      .map((doc) => ({ id: doc.id, ...doc.data() }))
+      .map((doc) => ({ id: doc.id, ...doc.data() })) // doc.id — строка
       .filter((booking) => booking.date === date);
     return filteredDocs;
   } catch {
@@ -68,6 +68,7 @@ export const addBooking = async (booking) => {
     });
 
     toast.success("Ви успішно записались до майстра!");
+    // Возвращаем именно Firestore сгенерированный id (строка!)
     return { id: docRef.id, ...booking, uid: user.uid };
   } catch (error) {
     toast.error(
@@ -84,22 +85,6 @@ const isAdmin = async (uid) => {
   return userSnap.exists() && userSnap.data().role === "admin";
 };
 
-const canUserModifyBooking = async (bookingId) => {
-  const user = auth.currentUser;
-  if (!user) throw new Error("Користувач не авторизований!");
-
-  const bookingRef = doc(db, "bookings", bookingId);
-  const bookingSnap = await getDoc(bookingRef);
-
-  if (!bookingSnap.exists()) throw new Error("Запис не знайдений!");
-
-  const bookingData = bookingSnap.data();
-
-  const admin = await isAdmin(user.uid);
-
-  return admin || bookingData.uid === user.uid;
-};
-
 export const updateBooking = async (id, updatedBooking) => {
   try {
     const bookingRef = doc(db, "bookings", id);
@@ -111,16 +96,52 @@ export const updateBooking = async (id, updatedBooking) => {
   }
 };
 
+const canUserModifyBooking = async (bookingId) => {
+  console.log("Переданный bookingId:", bookingId, "typeof:", typeof bookingId);
+  const user = auth.currentUser;
+  if (!user) throw new Error("Користувач не авторизований!");
+
+  // Приводим bookingId к строке
+  const bookingRef = doc(db, "bookings", String(bookingId));
+  const bookingSnap = await getDoc(bookingRef);
+
+  if (!bookingSnap.exists()) throw new Error("Запис не знайдений!");
+
+  const bookingData = bookingSnap.data();
+  console.log(
+    "bookingData.uid:",
+    bookingData.uid,
+    "typeof:",
+    typeof bookingData.uid
+  );
+
+  const admin = await isAdmin(user.uid);
+
+  // Приводим uid к строке для корректного сравнения
+  return admin || String(bookingData.uid) === String(user.uid);
+};
+
 export const deleteBooking = async (id) => {
+  console.log("deleteBooking вызывается с id:", id, "typeof:", typeof id);
   try {
-    if (!(await canUserModifyBooking(id))) {
+    if (!id) {
+      throw new Error("ID записи не указан");
+    }
+
+    // Если id не строка, приведём его к строке
+    const bookingIdStr = String(id);
+    const canModify = await canUserModifyBooking(bookingIdStr);
+    if (!canModify) {
       throw new Error("Недостатньо прав для видалення!");
     }
-    await deleteDoc(doc(db, "bookings", id));
-    toast.success("Запис до майстра успішно видалено!");
+
+    const bookingRef = doc(db, "bookings", bookingIdStr);
+    await deleteDoc(bookingRef);
+
+    return true;
   } catch (error) {
-    toast.error(error.message || "Не вдалося видалити запис до майстра!");
-    throw new Error(error.message);
+    console.error("Delete booking error:", error);
+    throw error;
   }
 };
 

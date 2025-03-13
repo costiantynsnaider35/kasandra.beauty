@@ -221,13 +221,29 @@ const DayBookings = () => {
 
   const handleDelete = async (bookingId) => {
     try {
-      await deleteBooking(bookingId);
-
-      setBookings((prevBookings) =>
-        prevBookings.filter((booking) => booking.id !== bookingId)
+      // Приводим bookingId к строке для уверенности, что передаём корректное значение
+      const bookingIdStr = String(bookingId);
+      // Проверяем существование записи
+      const bookingToDelete = bookings.find(
+        (booking) => String(booking.id) === bookingIdStr
       );
-    } catch {
-      toast.error;
+      if (!bookingToDelete) {
+        toast.error("Запись не найдена");
+        return;
+      }
+
+      // Удаляем из Firebase, передавая id в виде строки
+      await deleteBooking(bookingIdStr);
+
+      // Обновляем UI, фильтруя по строковому id
+      setBookings((prevBookings) =>
+        prevBookings.filter((booking) => String(booking.id) !== bookingIdStr)
+      );
+
+      toast.success("Запись успешно удалена");
+    } catch (error) {
+      toast.error(error.message || "Ошибка при удалении записи");
+      console.error("Delete error:", error);
     }
   };
 
@@ -300,12 +316,10 @@ const DayBookings = () => {
     const newBooking = { ...formData, date, duration: totalDuration };
 
     try {
-      await addBooking(newBooking);
+      // Получаем объект записи, содержащий id, сгенерированный Firebase
+      const createdBooking = await addBooking(newBooking);
 
-      setBookings((prevBookings) => [
-        ...prevBookings,
-        { ...newBooking, id: Date.now() }, // добавляем запись в локальный список
-      ]);
+      setBookings((prevBookings) => [...prevBookings, createdBooking]);
 
       setFormData({
         fullName: "",
@@ -315,7 +329,7 @@ const DayBookings = () => {
         comment: "",
       });
     } catch {
-      toast.error;
+      toast.error("Помилка при створенні запису");
     }
   };
 

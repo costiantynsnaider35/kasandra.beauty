@@ -84,7 +84,7 @@ const DayUserBookings = () => {
   const combinedList = [
     ...bookings.map((booking) => ({
       type: "booking",
-      id: booking.uid,
+      id: booking.id,
       startTime: dayjs(`${formattedDate} ${booking.time}`, "YYYY-MM-DD HH:mm"),
       endTime: dayjs(
         `${formattedDate} ${booking.time}`,
@@ -160,6 +160,7 @@ const DayUserBookings = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("FormData перед отправкой:", formData);
 
     if (
       !formData.fullName ||
@@ -299,13 +300,14 @@ const DayUserBookings = () => {
           date: formattedDate,
           uid: userId,
           duration: totalDuration,
-          endTime: endTimeProcedure.format("HH:mm"), // Добавляем время окончания
+          endTime: endTimeProcedure.format("HH:mm"),
+          id: docId,
         };
         await updateBooking(docId, updatedBooking);
 
         setBookings((prevBookings) =>
           prevBookings.map((booking) =>
-            booking.uid === editingBookingId ? updatedBooking : booking
+            booking.id === editingBookingId ? updatedBooking : booking
           )
         );
       } else {
@@ -358,7 +360,7 @@ const DayUserBookings = () => {
             if (item.type === "booking") {
               const { data: booking } = item;
               return (
-                <li key={booking.uid} className={s.bookingItem}>
+                <li key={booking.id} className={s.bookingItem}>
                   {booking.uid === userId ? (
                     <>
                       <p className={s.timeBookings}>
