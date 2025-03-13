@@ -3,6 +3,7 @@ import "./App.css";
 import { lazy, Suspense, useState, useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Toaster } from "react-hot-toast";
+import FCMSetup from "./Firebase/FCMSetup";
 
 const Loader = lazy(() => import("./components/Loader/Loader"));
 const Layout = lazy(() => import("./components/Header/Layout"));
@@ -39,10 +40,7 @@ const pageVariants = {
     opacity: 0,
     x: direction > 0 ? "100vw" : "-100vw",
   }),
-  enter: {
-    opacity: 1,
-    x: 0,
-  },
+  enter: { opacity: 1, x: 0 },
   out: (direction) => ({
     opacity: 0,
     x: direction > 0 ? "-100vw" : "100vw",
@@ -99,41 +97,44 @@ const App = () => {
   };
 
   return (
-    <div className={`app ${loading ? "loading" : ""}`}>
-      <Toaster position="top-center" />
-      <Layout setDirection={setDirection} />
-      <Suspense fallback={<Loader />}>
-        <AnimatePresence mode="wait" custom={direction}>
-          <Routes location={location} key={location.key}>
-            {routes.map((path) => {
-              const Component = routeComponents[path];
-              return (
-                <Route
-                  key={path}
-                  path={path}
-                  element={
-                    <motion.div
-                      custom={direction}
-                      initial="initial"
-                      animate="enter"
-                      exit="out"
-                      variants={pageVariants}
-                      transition={pageTransition}
-                      drag="x"
-                      dragConstraints={{ left: 0, right: 0 }}
-                      onDragStart={handleDragStart}
-                      onDragEnd={handleDragEnd}
-                    >
-                      <Component />
-                    </motion.div>
-                  }
-                />
-              );
-            })}
-          </Routes>
-        </AnimatePresence>
-      </Suspense>
-    </div>
+    <>
+      <FCMSetup />
+      <div className={`app ${loading ? "loading" : ""}`}>
+        <Toaster position="top-center" />
+        <Layout setDirection={setDirection} />
+        <Suspense fallback={<Loader />}>
+          <AnimatePresence mode="wait" custom={direction}>
+            <Routes location={location} key={location.key}>
+              {routes.map((path) => {
+                const Component = routeComponents[path];
+                return (
+                  <Route
+                    key={path}
+                    path={path}
+                    element={
+                      <motion.div
+                        custom={direction}
+                        initial="initial"
+                        animate="enter"
+                        exit="out"
+                        variants={pageVariants}
+                        transition={pageTransition}
+                        drag="x"
+                        dragConstraints={{ left: 0, right: 0 }}
+                        onDragStart={handleDragStart}
+                        onDragEnd={handleDragEnd}
+                      >
+                        <Component />
+                      </motion.div>
+                    }
+                  />
+                );
+              })}
+            </Routes>
+          </AnimatePresence>
+        </Suspense>
+      </div>
+    </>
   );
 };
 
