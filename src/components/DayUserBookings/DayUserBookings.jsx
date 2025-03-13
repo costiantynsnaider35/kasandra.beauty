@@ -307,7 +307,7 @@ const DayUserBookings = () => {
 
         setBookings((prevBookings) =>
           prevBookings.map((booking) =>
-            booking.id === editingBookingId ? updatedBooking : booking
+            booking.uid === userId ? updatedBooking : booking
           )
         );
       } else {
