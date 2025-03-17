@@ -11,12 +11,11 @@ export const initOneSignal = async () => {
 
     console.log("OneSignal успешно инициализирован");
 
-    const isPushSupported = await OneSignal.isPushNotificationsSupported();
-    if (isPushSupported) {
-      const permission = await OneSignal.getNotificationPermission();
-      if (permission !== "granted") {
-        await OneSignal.showSlidedownPrompt();
-      }
+    // Заменяем isPushNotificationsSupported на checkPermission
+    const permission = await OneSignal.getNotificationPermission();
+
+    if (permission !== "granted") {
+      await OneSignal.showSlidedownPrompt();
     }
   } catch (error) {
     console.error("Ошибка инициализации OneSignal:", error);
