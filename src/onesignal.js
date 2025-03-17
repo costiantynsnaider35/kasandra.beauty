@@ -17,13 +17,11 @@ export const initOneSignal = async () => {
 
     console.log("OneSignal успешно инициализирован");
 
-    // Подписка на изменения состояния подписки
-    OneSignal.on("subscriptionChange", (state) => {
+    OneSignal.on("subscriptionChange", async (state) => {
       console.log("Состояние подписки:", state);
-
-      // Если разрешение не предоставлено, показываем prompt для подписки
-      if (state.permission !== "granted") {
-        OneSignal.showSlidedownPrompt();
+      if (state.isSubscribed) {
+        await savePlayerIdToFirebase(); // Сохраняем player_id в Firebase
+        console.log("Player ID сохранен в Firebase.");
       }
     });
 

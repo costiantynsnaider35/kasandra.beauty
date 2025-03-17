@@ -16,17 +16,14 @@ import { sendNotificationToAdmin } from "../onesignal.js";
 // Функция для получения player_id администратора по его email
 export const getAdminPlayerId = async (adminEmail) => {
   try {
-    // Строим запрос к коллекции "users" для поиска администратора по email
     const userQuery = query(
       collection(db, "users"),
-      where("email", "==", adminEmail) // Ищем пользователя с таким email
+      where("email", "==", adminEmail)
     );
-
-    const querySnapshot = await getDocs(userQuery); // Выполняем запрос
+    const querySnapshot = await getDocs(userQuery);
 
     if (!querySnapshot.empty) {
-      // Если найден хотя бы один пользователь
-      const adminDoc = querySnapshot.docs[0]; // Берем первого пользователя, если их несколько
+      const adminDoc = querySnapshot.docs[0];
       const playerId = adminDoc.data().onesignalPlayerId;
 
       if (!playerId) {
@@ -36,11 +33,9 @@ export const getAdminPlayerId = async (adminEmail) => {
       console.log("Player ID найден:", playerId);
       return playerId;
     } else {
-      // Если администратор не найден
       throw new Error("Администратор с таким email не найден.");
     }
   } catch (error) {
-    // Логируем ошибку и выбрасываем её дальше
     console.error("Ошибка при получении player_id администратора:", error);
     throw error;
   }
