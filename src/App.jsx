@@ -3,7 +3,6 @@ import "./App.css";
 import { lazy, Suspense, useState, useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Toaster } from "react-hot-toast";
-import { initOneSignal } from "./onesignal.js";
 
 const Loader = lazy(() => import("./components/Loader/Loader"));
 const Layout = lazy(() => import("./components/Header/Layout"));
@@ -66,10 +65,6 @@ const App = () => {
     }
     setLoading(false);
   }, [location]);
-
-  useEffect(() => {
-    initOneSignal(); // <-- Запускаем OneSignal при загрузке приложения
-  }, []);
 
   const handleDragStart = (event) => {
     const target = event.target;
