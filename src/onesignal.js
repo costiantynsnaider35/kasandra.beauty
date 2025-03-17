@@ -17,11 +17,17 @@ export const initOneSignal = async () => {
 
     console.log("OneSignal успешно инициализирован");
 
+    // Подписка на изменения состояния подписки
     OneSignal.on("subscriptionChange", async (state) => {
       console.log("Состояние подписки:", state);
       if (state.isSubscribed) {
-        await savePlayerIdToFirebase(); // Сохраняем player_id в Firebase
+        // Если пользователь подписан, сохраняем player_id в Firebase
+        await savePlayerIdToFirebase();
         console.log("Player ID сохранен в Firebase.");
+      } else {
+        console.log("Пользователь не подписан.");
+        // Можно показать пользователю приглашение для подписки
+        OneSignal.showSlidedownPrompt();
       }
     });
 
@@ -33,13 +39,15 @@ export const initOneSignal = async () => {
   }
 };
 
-// Функция для отправки уведомлений админ
-
 // Функция для отправки уведомлений админу
 export const sendNotificationToAdmin = async (message) => {
   try {
     const adminEmail = "constantin161089@gmail.com"; // Email администратора
     const adminPlayerId = await getAdminPlayerId(adminEmail); // Получаем player_id администратора
+
+    if (!adminPlayerId) {
+      throw new Error("Администратор не подписан на уведомления.");
+    }
 
     const appId = "f1a51bef-398a-4f40-8907-586539af311b"; // Ваш OneSignal appId
     const apiKey =
@@ -71,10 +79,15 @@ export const sendNotificationToAdmin = async (message) => {
 export const savePlayerIdToFirebase = async () => {
   try {
     const playerId = await OneSignal.getPlayerId(); // Получаем playerId из OneSignal
-    const adminEmail = "constantin161089@gmail.com"; // Email администратора
+    if (!playerId) {
+      throw new Error("Не удалось получить player_id.");
+    }
 
+    const adminEmail = "constantin161089@gmail.com"; // Email администратора
     const userRef = doc(db, "users", adminEmail); // Ищем пользователя по email
-    await setDoc(userRef, { onesignalPlayerId: playerId }, { merge: true }); // Сохраняем playerId
+
+    // Сохраняем playerId в Firebase
+    await setDoc(userRef, { onesignalPlayerId: playerId }, { merge: true });
     console.log(`Player ID для ${adminEmail} сохранен:`, playerId);
   } catch (error) {
     console.error("Ошибка при сохранении player_id в Firebase:", error);
