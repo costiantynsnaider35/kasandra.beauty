@@ -11,30 +11,6 @@ import {
   getDoc,
 } from "firebase/firestore";
 import { toast } from "react-hot-toast";
-import { sendNotificationToAdmin } from "../onesignal.js";
-
-// Функция для получения player_id администратора по его email
-export const getAdminPlayerId = async (adminEmail) => {
-  try {
-    const userQuery = query(
-      collection(db, "users"),
-      where("email", "==", adminEmail)
-    );
-    const querySnapshot = await getDocs(userQuery);
-
-    if (!querySnapshot.empty) {
-      const adminDoc = querySnapshot.docs[0];
-      const playerId = adminDoc.data().onesignalPlayerId;
-      console.log("Admin player_id:", playerId); // Выводим player_id администратора в консоль
-      return playerId;
-    } else {
-      throw new Error("Администратор не найден.");
-    }
-  } catch (error) {
-    console.error("Ошибка при получении player_id администратора:", error);
-    throw error;
-  }
-};
 
 export const getBookingsByDate = async (date) => {
   try {
@@ -92,16 +68,6 @@ export const addBooking = async (booking) => {
       uid: user.uid,
     });
 
-    // Формируем сообщение для уведомления
-    const message = `${
-      booking.fullName
-    } записався на процедуру ${booking.procedures.join(", ")} на ${
-      booking.time
-    }`;
-
-    // Отправляем уведомление админу
-    await sendNotificationToAdmin("constantin161089@gmail.com", message);
-
     toast.success("Ви успішно записались до майстра!");
     return { id: docRef.id, ...booking, uid: user.uid };
   } catch (error) {
@@ -125,30 +91,7 @@ export const updateBooking = async (id, updatedBooking) => {
     const bookingSnap = await getDoc(bookingRef);
     if (!bookingSnap.exists()) throw new Error("Запис не знайдений!");
 
-    const oldBooking = bookingSnap.data();
-
     await updateDoc(bookingRef, updatedBooking);
-
-    // Формируем сообщение для уведомления
-    let message = `${updatedBooking.fullName} змінив свою запис.`;
-
-    // Если поменялась процедура
-    if (
-      updatedBooking.procedures &&
-      updatedBooking.procedures !== oldBooking.procedures
-    ) {
-      message += ` Замінив процедуру з ${oldBooking.procedures.join(
-        ", "
-      )} на ${updatedBooking.procedures.join(", ")}.`;
-    }
-
-    // Если поменялось время
-    if (updatedBooking.time && oldBooking.time !== updatedBooking.time) {
-      message += ` Змінив час з ${oldBooking.time} на ${updatedBooking.time}.`;
-    }
-
-    // Отправляем уведомление админу
-    await sendNotificationToAdmin("constantin161089@gmail.com", message);
 
     toast.success("Запис успішно оновлено!");
   } catch (error) {
