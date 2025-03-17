@@ -1,19 +1,24 @@
 import OneSignal from "react-onesignal";
 
 export const initOneSignal = async () => {
-  if (window.OneSignalInitialized) return; // Предотвращает повторную инициализацию
+  if (window.OneSignalInitialized) return; // Предотвращаем повторную инициализацию
   window.OneSignalInitialized = true;
 
-  await OneSignal.init({
-    appId: "f1a51bef-398a-4f40-8907-586539af311b",
-    allowLocalhostAsSecureOrigin: true, // Для работы на localhost
-  });
+  try {
+    await OneSignal.init({
+      appId: "f1a51bef-398a-4f40-8907-586539af311b",
+    });
 
-  const isPushSupported = await OneSignal.isPushNotificationsSupported();
-  if (isPushSupported) {
-    const permission = await OneSignal.getNotificationPermission();
-    if (permission !== "granted") {
-      await OneSignal.showSlidedownPrompt(); // Показываем только если нет разрешения
+    console.log("OneSignal успешно инициализирован");
+
+    const isPushSupported = await OneSignal.isPushNotificationsSupported();
+    if (isPushSupported) {
+      const permission = await OneSignal.getNotificationPermission();
+      if (permission !== "granted") {
+        await OneSignal.showSlidedownPrompt();
+      }
     }
+  } catch (error) {
+    console.error("Ошибка инициализации OneSignal:", error);
   }
 };
