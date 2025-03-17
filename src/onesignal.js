@@ -78,7 +78,8 @@ export const sendNotificationToAdmin = async (message) => {
 
 export const savePlayerIdToFirebase = async () => {
   try {
-    const playerId = await OneSignal.getPlayerId(); // Получаем playerId из OneSignal
+    const playerId = await OneSignal.getPlayerId();
+    console.log("Player ID для администратора:", playerId); // Получаем playerId из OneSignal
     if (!playerId) {
       throw new Error("Не удалось получить player_id.");
     }

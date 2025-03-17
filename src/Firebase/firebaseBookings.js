@@ -25,15 +25,10 @@ export const getAdminPlayerId = async (adminEmail) => {
     if (!querySnapshot.empty) {
       const adminDoc = querySnapshot.docs[0];
       const playerId = adminDoc.data().onesignalPlayerId;
-
-      if (!playerId) {
-        throw new Error("У администратора нет player_id.");
-      }
-
-      console.log("Player ID найден:", playerId);
+      console.log("Admin player_id:", playerId); // Выводим player_id администратора в консоль
       return playerId;
     } else {
-      throw new Error("Администратор с таким email не найден.");
+      throw new Error("Администратор не найден.");
     }
   } catch (error) {
     console.error("Ошибка при получении player_id администратора:", error);
