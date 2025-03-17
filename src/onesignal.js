@@ -51,7 +51,7 @@ export const sendNotificationToAdmin = async (message) => {
 
     const appId = "f1a51bef-398a-4f40-8907-586539af311b"; // Ваш OneSignal appId
     const apiKey =
-      "os_v2_app_6gsrx3zzrjhubcihlbsttlzrdnh362idvp4ufeevpw3bwhpv5adbgyo2wadvv27ynzkw4chnbyzcnivodqwmugpr4gxcigy7wnvawcy"; // Ваш OneSignal REST API ключ
+      "os_v2_org_tadjp5c22nearf2v2tgymis4rw5fojha5f2u4mv4ukfzoqaeno373lxvup34lz6dz4jrpus72tm56wcx7abavsc5ldwtgfqlwtv4rgi"; // Ваш OneSignal REST API ключ
 
     const headers = {
       "Content-Type": "application/json",
