@@ -1,22 +1,29 @@
 import OneSignal from "react-onesignal";
 
+// onesignal.js
 export const initOneSignal = async () => {
   if (window.OneSignalInitialized) return; // Предотвращаем повторную инициализацию
   window.OneSignalInitialized = true;
 
   try {
-    await OneSignal.init({
-      appId: "f1a51bef-398a-4f40-8907-586539af311b",
-    });
+    // Инициализация OneSignal
+    if (window.OneSignal) {
+      window.OneSignal.push(function () {
+        OneSignal.init({
+          appId: "f1a51bef-398a-4f40-8907-586539af311b",
+        });
 
-    console.log("OneSignal успешно инициализирован");
+        // Получаем состояние разрешений и подписки
+        OneSignal.getPermissionSubscriptionState(function (state) {
+          console.log("Permission state:", state);
 
-    // Получаем состояние разрешений и подписки
-    const permissionState = await OneSignal.getPermissionSubscriptionState();
-
-    if (permissionState.permission !== "granted") {
-      // Если разрешение не предоставлено, показываем prompt для подписки
-      await OneSignal.showSlidedownPrompt();
+          if (state.permission !== "granted") {
+            OneSignal.showSlidedownPrompt();
+          }
+        });
+      });
+    } else {
+      console.error("OneSignal SDK не найден в window.");
     }
   } catch (error) {
     console.error("Ошибка инициализации OneSignal:", error);
