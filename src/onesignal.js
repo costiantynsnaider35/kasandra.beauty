@@ -11,10 +11,11 @@ export const initOneSignal = async () => {
 
     console.log("OneSignal успешно инициализирован");
 
-    // Заменяем isPushNotificationsSupported на checkPermission
-    const permission = await OneSignal.getNotificationPermission();
+    // Получаем состояние разрешений и подписки
+    const permissionState = await OneSignal.getPermissionSubscriptionState();
 
-    if (permission !== "granted") {
+    if (permissionState.permission !== "granted") {
+      // Если разрешение не предоставлено, показываем prompt для подписки
       await OneSignal.showSlidedownPrompt();
     }
   } catch (error) {
