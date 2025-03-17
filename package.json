@@ -29,6 +29,7 @@
     "react-hot-toast": "^2.5.2",
     "react-icons": "^5.4.0",
     "react-modal": "^3.16.3",
+    "react-onesignal": "^3.1.1",
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.1.5",
     "react-swiper": "^0.1.5",
