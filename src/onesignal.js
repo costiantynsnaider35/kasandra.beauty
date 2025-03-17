@@ -1,6 +1,7 @@
 import OneSignal from "react-onesignal";
-import { getAdminPlayerId } from "./firebaseBookings"; // Импортируем функцию для получения player_id администратора
+// Импортируем функцию для получения player_id администратора
 import axios from "axios";
+import { getAdminPlayerId } from "./Firebase/firebaseBookings.js";
 
 export const initOneSignal = async () => {
   if (window.OneSignalInitialized) return; // Предотвращаем повторную инициализацию
