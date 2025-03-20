@@ -1,4 +1,4 @@
-import { db, auth } from "./firebaseConfig.js";
+import { db, auth, sendTelegramMessage } from "./firebaseConfig.js";
 import {
   collection,
   getDocs,
@@ -11,6 +11,65 @@ import {
   getDoc,
 } from "firebase/firestore";
 import { toast } from "react-hot-toast";
+
+// Форматирование даты в формате 20.03.25
+const formatDate = (date) => {
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = String(date.getFullYear()).slice(2); // Берем последние 2 цифры года
+  return `${day}.${month}.${year}`;
+};
+
+// Форматирование времени
+const formatTime = (time) => {
+  return time.slice(0, 5); // Получаем только время без секунд
+};
+
+// Функция для определения пола пользователя по имени
+const getGender = (name) => {
+  if (!name) return "unknown"; // Если name не определено, возвращаем "unknown"
+
+  const femaleEndings = ["а", "я"]; // Окончания для женских имен
+  const maleEndings = ["й", "н", "в", "р", "с"]; // Окончания для мужских имен
+
+  const lastChar = name.slice(-1).toLowerCase();
+
+  if (femaleEndings.includes(lastChar)) {
+    return "female";
+  }
+  if (maleEndings.includes(lastChar)) {
+    return "male";
+  }
+
+  return "unknown"; // Если не удалось определить пол
+};
+
+// Функция для формирования сообщения в зависимости от пола и действия
+const getActionMessage = (name, action) => {
+  const gender = getGender(name);
+  switch (action) {
+    case "book":
+      return gender === "female"
+        ? "записалась"
+        : gender === "male"
+        ? "записався"
+        : "записався";
+    case "update":
+      return gender === "female"
+        ? "оновила"
+        : gender === "male"
+        ? "оновив"
+        : "оновив";
+    case "delete":
+      return gender === "female"
+        ? "видалила"
+        : gender === "male"
+        ? "видалив"
+        : "видалив";
+    default:
+      return "";
+  }
+};
 
 export const getBookingsByDate = async (date) => {
   try {
@@ -68,6 +127,26 @@ export const addBooking = async (booking) => {
       uid: user.uid,
     });
 
+    // Форматируем дату и время для отображения
+    const formattedDate = formatDate(new Date());
+    const formattedTime = formatTime(new Date().toLocaleTimeString());
+
+    // Отправка уведомления в Telegram
+    if (!admin) {
+      const message = `${booking.fullName} ${getActionMessage(
+        booking.fullName,
+        "book"
+      )} 
+на: ${booking.date}, час: ${booking.time}, ${booking.procedures
+        .map((p) => `${p.category}: ${p.procedure}`)
+        .join(", ")}
+
+Дата створення запису: ${formattedDate}
+Час створення запису: ${formattedTime}`;
+
+      sendTelegramMessage(message);
+    }
+
     toast.success("Ви успішно записались до майстра!");
     return { id: docRef.id, ...booking, uid: user.uid };
   } catch (error) {
@@ -87,15 +166,66 @@ const isAdmin = async (uid) => {
 
 export const updateBooking = async (id, updatedBooking) => {
   try {
+    const user = auth.currentUser;
+    if (!user) throw new Error("Користувач не авторизований!");
+
+    const admin = await isAdmin(user.uid);
+
     const bookingRef = doc(db, "bookings", id);
     const bookingSnap = await getDoc(bookingRef);
     if (!bookingSnap.exists()) throw new Error("Запис не знайдений!");
 
+    const oldBooking = bookingSnap.data();
+
+    // Форматируем дату и время для отображения
+    const formattedDate = formatDate(new Date());
+    const formattedTime = formatTime(new Date().toLocaleTimeString());
+
+    // Формируем сообщение
+    let message = `${updatedBooking.fullName} ${getActionMessage(
+      updatedBooking.fullName,
+      "update"
+    )} запис`;
+
+    if (updatedBooking.date && updatedBooking.date !== oldBooking.date) {
+      message += ` з ${oldBooking.date} на ${updatedBooking.date}`;
+    }
+
+    if (updatedBooking.time && updatedBooking.time !== oldBooking.time) {
+      message += `, час з ${oldBooking.time} на ${updatedBooking.time}`;
+    }
+
+    if (updatedBooking.procedures) {
+      const oldProcedures = oldBooking.procedures
+        .map((p) => `${p.category}: ${p.procedure}`)
+        .join(", ");
+      const newProcedures = updatedBooking.procedures
+        .map((p) => `${p.category}: ${p.procedure}`)
+        .join(", ");
+      if (newProcedures !== oldProcedures) {
+        message += `, Процедури: з ${oldProcedures} на ${newProcedures}`;
+      }
+    }
+
+    message += `
+
+Дата оновлення запису: ${formattedDate}
+Час оновлення запису: ${formattedTime}`;
+
+    sendTelegramMessage(message);
+
+    // Обновляем только измененные данные
     await updateDoc(bookingRef, updatedBooking);
+
+    // Отправка уведомления в Telegram, если пользователь не администратор
+    if (!admin) {
+      sendTelegramMessage(message);
+    }
 
     toast.success("Запис успішно оновлено!");
   } catch (error) {
-    toast.error("Помилка при оновленні запису");
+    console.error("Error updating booking: ", error);
+    toast.error("Помилка при оновленні запису: " + (error.message || error));
     throw new Error(error.message);
   }
 };
@@ -118,6 +248,11 @@ const canUserModifyBooking = async (bookingId) => {
 
 export const deleteBooking = async (id) => {
   try {
+    const user = auth.currentUser;
+    if (!user) throw new Error("Користувач не авторизований!");
+
+    const admin = await isAdmin(user.uid);
+
     if (!id) {
       throw new Error("ID записи не указан");
     }
@@ -129,12 +264,38 @@ export const deleteBooking = async (id) => {
     }
 
     const bookingRef = doc(db, "bookings", bookingIdStr);
+    const bookingSnap = await getDoc(bookingRef);
+
+    if (!bookingSnap.exists()) throw new Error("Запис не знайдений!");
+
+    const bookingData = bookingSnap.data();
+
+    // Формируем сообщение для уведомления
+    const formattedDate = formatDate(new Date());
+    const formattedTime = formatTime(new Date().toLocaleTimeString());
+
+    const message = `${bookingData.fullName} ${getActionMessage(
+      bookingData.fullName,
+      "delete"
+    )} свій запис 
+${bookingData.date} на ${bookingData.time}
+
+Дата видалення запису: ${formattedDate}
+Час видалення запису: ${formattedTime}`;
+
+    // Удаляем запись
     await deleteDoc(bookingRef);
 
+    // Отправка уведомления в Telegram, если пользователь не администратор
+    if (!admin) {
+      sendTelegramMessage(message, "MarkdownV2");
+    }
+
+    toast.success("Запис успішно видалено!");
+
     return true;
-  } catch (error) {
-    console.error("Delete booking error:", error);
-    throw error;
+  } catch {
+    toast.error("Помилка при видаленні запису");
   }
 };
 

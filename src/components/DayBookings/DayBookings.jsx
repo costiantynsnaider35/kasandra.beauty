@@ -215,7 +215,7 @@ const DayBookings = () => {
       setEditingTimeId(null);
       setNewTime("");
     } catch {
-      toast.error("Помилка при оновленні запису");
+      toast.error;
     }
   };
 
@@ -227,7 +227,7 @@ const DayBookings = () => {
         (booking) => String(booking.id) === bookingIdStr
       );
       if (!bookingToDelete) {
-        toast.error("Запись не найдена");
+        toast.error;
         return;
       }
 
@@ -237,9 +237,9 @@ const DayBookings = () => {
         prevBookings.filter((booking) => String(booking.id) !== bookingIdStr)
       );
 
-      toast.success("Запись успешно удалена");
+      toast.success;
     } catch (error) {
-      toast.error(error.message || "Ошибка при удалении записи");
+      toast.error;
       console.error("Delete error:", error);
     }
   };
@@ -323,7 +323,7 @@ const DayBookings = () => {
         comment: "",
       });
     } catch {
-      toast.error("Помилка при створенні запису");
+      toast.error;
     }
   };
 
@@ -363,8 +363,7 @@ const DayBookings = () => {
       await deleteBreak(breakId);
       setBreaks((prev) => prev.filter((breakItem) => breakItem.id !== breakId));
       toast.success("Перерва видалена!");
-    } catch (error) {
-      console.error("Error deleting break:", error);
+    } catch {
       toast.error("Помилка при видаленні перерви");
     }
   };

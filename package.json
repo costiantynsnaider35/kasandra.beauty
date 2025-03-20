@@ -12,41 +12,27 @@
   },
   "dependencies": {
     "@vitejs/plugin-react": "^1.3.2",
-    "@vitejs/plugin-vue": "^1.7.1",
-    "axios": "^1.8.3",
     "clsx": "^2.1.1",
     "crypto-js": "^4.2.0",
     "dayjs": "^1.11.13",
-    "dotenv": "^16.4.7",
     "firebase": "^11.3.1",
     "framer-motion": "^12.4.3",
     "leaflet": "^1.9.4",
-    "lucide-react": "^0.475.0",
-    "mapbox-gl": "^3.10.0",
     "modern-normalize": "^3.0.1",
     "react": "^19.0.0",
-    "react-calendar": "^5.1.0",
     "react-dom": "^19.0.0",
     "react-hot-toast": "^2.5.2",
     "react-icons": "^5.4.0",
     "react-modal": "^3.16.3",
-    "react-onesignal": "^3.1.1",
-    "react-redux": "^9.2.0",
-    "react-router-dom": "^7.1.5",
-    "react-swiper": "^0.1.5",
-    "swiper": "^11.2.2"
+    "react-router-dom": "^7.1.5"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
-    "@types/react": "^19.0.8",
-    "@types/react-dom": "^19.0.3",
-    "@vitejs/plugin-react-swc": "^3.8.0",
     "eslint": "^9.19.0",
     "eslint-plugin-react": "^7.37.4",
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.18",
     "globals": "^15.14.0",
-    "vite": "^6.1.1",
-    "webpack-obfuscator": "^3.5.1"
+    "vite": "^6.1.1"
   }
 }
