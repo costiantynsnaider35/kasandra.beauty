@@ -6,7 +6,10 @@ import { FaCircleArrowLeft, FaCircleArrowRight } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 import Logout from "../Logout/Logout";
 import { getHolidays } from "../../Firebase/firebaseHolidays.js";
-import { getAllBookingDates } from "../../Firebase/firebaseBookings.js";
+import {
+  deleteOldBookings,
+  getAllBookingDates,
+} from "../../Firebase/firebaseBookings.js";
 import toast from "react-hot-toast";
 
 dayjs.locale("uk");
@@ -30,6 +33,10 @@ const BookingsAdmine = () => {
       }
     };
     fetchData();
+  }, []);
+
+  useEffect(() => {
+    deleteOldBookings();
   }, []);
 
   const generateDays = (currentDate) => {

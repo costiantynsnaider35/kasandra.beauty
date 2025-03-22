@@ -317,3 +317,28 @@ export const findBookingByUidAndDate = async (uid, date) => {
     return null;
   }
 };
+
+export const deleteOldBookings = async () => {
+  try {
+    const now = new Date();
+    now.setDate(now.getDate() - 30);
+    const formattedDate = now.toISOString().split("T")[0];
+
+    const bookingsRef = collection(db, "bookings");
+    const allDocs = await getDocs(bookingsRef);
+
+    const oldBookings = allDocs.docs.filter(
+      (doc) => doc.data().date < formattedDate
+    );
+
+    if (oldBookings.length === 0) {
+      return;
+    }
+
+    oldBookings.forEach(async (booking) => {
+      await deleteDoc(doc(db, "bookings", booking.id));
+    });
+  } catch {
+    console.error;
+  }
+};
