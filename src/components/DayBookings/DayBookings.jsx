@@ -290,16 +290,17 @@ const DayBookings = () => {
         "YYYY-MM-DD HH:mm"
       );
       const bookingEndTime = bookingStartTime.add(booking.duration, "minute");
+
       return (
         selectedTime.isBetween(bookingStartTime, bookingEndTime, null, "[)") ||
-        endTime.isBetween(bookingStartTime, bookingEndTime, null, "(]")
+        endTime.isBetween(bookingStartTime, bookingEndTime, null, "(]") ||
+        selectedTime.isSame(bookingEndTime, "minute") // Учитываем, что новая запись может начинаться сразу после завершения предыдущей
       );
     });
 
     if (isTimeBooked) {
-      toast.warn(
-        "Цей час вже зайнятий! Проте ви можете записати клієнта на цей час."
-      );
+      toast.error("Цей час вже зайнятий! Виберіть інший.");
+      return;
     }
 
     const newBooking = { ...formData, date, duration: totalDuration };
@@ -317,7 +318,7 @@ const DayBookings = () => {
         comment: "",
       });
     } catch {
-      toast.error("Помилка при створенні запису.");
+      toast.error("Помилка при додаванні запису");
     }
   };
 
