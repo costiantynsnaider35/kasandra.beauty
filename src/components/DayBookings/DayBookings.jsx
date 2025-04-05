@@ -322,11 +322,18 @@ const DayBookings = () => {
   const handleCheckboxChange = (category, procedure) => (event) => {
     const isChecked = event.target.checked;
     setFormData((prevData) => {
-      const updatedProcedures = isChecked
-        ? [...prevData.procedures, { category, procedure }]
-        : prevData.procedures.filter(
-            (p) => !(p.category === category && p.procedure === procedure)
-          );
+      const updatedProcedures = prevData.procedures.map((catProcedures) => {
+        if (catProcedures.category === category) {
+          const updatedCategoryProcedures = isChecked
+            ? [...catProcedures.procedures, procedure]
+            : catProcedures.procedures.filter((p) => p !== procedure);
+          return { ...catProcedures, procedures: updatedCategoryProcedures };
+        }
+        return catProcedures;
+      });
+      if (!updatedProcedures.some((item) => item.category === category)) {
+        updatedProcedures.push({ category, procedures: [procedure] });
+      }
 
       return { ...prevData, procedures: updatedProcedures };
     });
@@ -583,7 +590,9 @@ const DayBookings = () => {
                         name="procedures"
                         value={option}
                         checked={formData.procedures.some(
-                          (p) => p.procedure === option
+                          (p) =>
+                            p.category === category.category &&
+                            p.procedures.includes(option)
                         )}
                         onChange={handleCheckboxChange(
                           category.category,
@@ -599,6 +608,7 @@ const DayBookings = () => {
             </AnimatePresence>
           </div>
         ))}
+
         <label className={s.timeAdminLabel}>
           Час*:
           <input
