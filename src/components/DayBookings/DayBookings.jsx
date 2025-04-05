@@ -245,15 +245,11 @@ const DayBookings = () => {
   };
 
   const handleChange = (e) => {
-    const value = e.target.value;
-
-    const regex = /^([01]?[0-9]|2[0-3]):([0-5]?[0-9])$/;
-    if (regex.test(value) || value === "") {
-      setFormData((prev) => ({
-        ...prev,
-        [e.target.name]: value,
-      }));
-    }
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
   };
 
   const handleSubmit = async (e) => {
@@ -612,14 +608,11 @@ const DayBookings = () => {
         <label className={s.timeAdminLabel}>
           Час*:
           <input
-            type="text"
+            type="time"
             name="time"
             value={formData.time}
             onChange={handleChange}
             required
-            pattern="([01]?[0-9]|2[0-3]):([0-5]?[0-9])"
-            title="Введіть час у форматі HH:mm"
-            placeholder="HH:mm"
             className={s.timeAdminInput}
           />
         </label>

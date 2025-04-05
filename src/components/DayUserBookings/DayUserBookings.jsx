@@ -145,15 +145,11 @@ const DayUserBookings = () => {
   }, [editingBookingId, bookings]);
 
   const handleChange = (e) => {
-    const value = e.target.value;
-
-    const regex = /^([01]?[0-9]|2[0-3]):([0-5]?[0-9])$/;
-    if (regex.test(value) || value === "") {
-      setFormData((prev) => ({
-        ...prev,
-        [e.target.name]: value,
-      }));
-    }
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
   };
 
   const handleCheckboxChange = (category, procedure) => (event) => {
@@ -490,14 +486,11 @@ const DayUserBookings = () => {
         <label className={s.timeLabel}>
           Час*:
           <input
-            type="text"
+            type="time"
             name="time"
             value={formData.time}
             onChange={handleChange}
             required
-            pattern="([01]?[0-9]|2[0-3]):([0-5]?[0-9])"
-            title="Введите время в формате HH:mm"
-            placeholder="HH:mm"
             className={s.timeAdminInput}
             min="09:00"
             max="19:00"
