@@ -295,9 +295,11 @@ const DayBookings = () => {
         endTime.isBetween(bookingStartTime, bookingEndTime, null, "(]")
       );
     });
+
     if (isTimeBooked) {
-      toast.error("Цей час вже зайнятий! Виберіть інший.");
-      return;
+      toast.warn(
+        "Цей час вже зайнятий! Проте ви можете записати клієнта на цей час."
+      );
     }
 
     const newBooking = { ...formData, date, duration: totalDuration };
@@ -315,7 +317,7 @@ const DayBookings = () => {
         comment: "",
       });
     } catch {
-      toast.error;
+      toast.error("Помилка при створенні запису.");
     }
   };
 
