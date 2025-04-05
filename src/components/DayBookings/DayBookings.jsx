@@ -276,50 +276,22 @@ const DayBookings = () => {
       return;
     }
 
+    // Подсчитываем общую продолжительность процедур
     const totalDuration = formData.procedures.reduce(
       (acc, { category, procedure }) => {
         return acc + (procedureDurations[category][procedure] || 0);
       },
       0
     );
+
+    // Вычисляем конечное время
     const endTime = selectedTime.add(totalDuration, "minute");
 
-    const isAdmin = true;
-
-    const isTimeBooked =
-      !isAdmin &&
-      bookings.some((booking) => {
-        const bookingStartTime = dayjs(
-          `${date} ${booking.time}`,
-          "YYYY-MM-DD HH:mm"
-        );
-        const bookingEndTime = bookingStartTime.add(booking.duration, "minute");
-
-        return (
-          selectedTime.isBetween(
-            bookingStartTime,
-            bookingEndTime,
-            null,
-            "[)"
-          ) ||
-          endTime.isBetween(bookingStartTime, bookingEndTime, null, "(]") ||
-          selectedTime.isSame(bookingEndTime, "minute") ||
-          endTime.isSame(bookingStartTime, "minute")
-        );
-      });
-
-    if (isTimeBooked) {
-      toast.error("Цей час вже зайнятий! Виберіть інший.");
-      return;
-    }
-
-    const newBooking = { ...formData, date, duration: totalDuration };
+    const newBooking = { ...formData, date, duration: totalDuration, endTime };
 
     try {
       const createdBooking = await addBooking(newBooking);
-
       setBookings((prevBookings) => [...prevBookings, createdBooking]);
-
       setFormData({
         fullName: "",
         phoneNumber: "",
