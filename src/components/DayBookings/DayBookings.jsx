@@ -290,11 +290,14 @@ const DayBookings = () => {
         "YYYY-MM-DD HH:mm"
       );
       const bookingEndTime = bookingStartTime.add(booking.duration, "minute");
+
       return (
         selectedTime.isBetween(bookingStartTime, bookingEndTime, null, "[)") ||
-        endTime.isBetween(bookingStartTime, bookingEndTime, null, "(]")
+        endTime.isBetween(bookingStartTime, bookingEndTime, null, "(]") ||
+        selectedTime.isSame(bookingEndTime, "minute")
       );
     });
+
     if (isTimeBooked) {
       toast.error("Цей час вже зайнятий! Виберіть інший.");
       return;
