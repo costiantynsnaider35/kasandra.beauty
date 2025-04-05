@@ -245,11 +245,15 @@ const DayBookings = () => {
   };
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+    const value = e.target.value;
+
+    const regex = /^([01]?[0-9]|2[0-3]):([0-5]?[0-9])$/;
+    if (regex.test(value) || value === "") {
+      setFormData((prev) => ({
+        ...prev,
+        [e.target.name]: value,
+      }));
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -284,14 +288,13 @@ const DayBookings = () => {
       return;
     }
 
-    // Мы убираем проверку на занятость по времени окончания, проверяя только время начала
     const isTimeBooked = bookings.some((booking) => {
       const bookingStartTime = dayjs(
         `${date} ${booking.time}`,
         "YYYY-MM-DD HH:mm"
       );
 
-      return selectedTime.isSame(bookingStartTime, "minute"); // Проверка только на время начала
+      return selectedTime.isSame(bookingStartTime, "minute");
     });
 
     if (isTimeBooked) {
@@ -615,10 +618,12 @@ const DayBookings = () => {
             onChange={handleChange}
             required
             pattern="([01]?[0-9]|2[0-3]):([0-5]?[0-9])"
-            title="Введите время в формате HH:mm"
+            title="Введіть час у форматі HH:mm"
+            placeholder="HH:mm"
             className={s.timeAdminInput}
           />
         </label>
+
         <button type="submit" className={s.addAdminBtn}>
           Записати
         </button>
