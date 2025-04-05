@@ -276,22 +276,37 @@ const DayBookings = () => {
       return;
     }
 
-    // Подсчитываем общую продолжительность процедур
     const totalDuration = formData.procedures.reduce(
       (acc, { category, procedure }) => {
         return acc + (procedureDurations[category][procedure] || 0);
       },
       0
     );
-
-    // Вычисляем конечное время
     const endTime = selectedTime.add(totalDuration, "minute");
 
-    const newBooking = { ...formData, date, duration: totalDuration, endTime };
+    const isTimeBooked = bookings.some((booking) => {
+      const bookingStartTime = dayjs(
+        `${date} ${booking.time}`,
+        "YYYY-MM-DD HH:mm"
+      );
+      const bookingEndTime = bookingStartTime.add(booking.duration, "minute");
+      return (
+        selectedTime.isBetween(bookingStartTime, bookingEndTime, null, "[)") ||
+        endTime.isBetween(bookingStartTime, bookingEndTime, null, "(]")
+      );
+    });
+    if (isTimeBooked) {
+      toast.error("Цей час вже зайнятий! Виберіть інший.");
+      return;
+    }
+
+    const newBooking = { ...formData, date, duration: totalDuration };
 
     try {
       const createdBooking = await addBooking(newBooking);
+
       setBookings((prevBookings) => [...prevBookings, createdBooking]);
+
       setFormData({
         fullName: "",
         phoneNumber: "",
@@ -300,7 +315,7 @@ const DayBookings = () => {
         comment: "",
       });
     } catch {
-      toast.error("Помилка при додаванні запису");
+      toast.error;
     }
   };
 
