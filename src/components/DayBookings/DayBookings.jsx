@@ -324,7 +324,9 @@ const DayBookings = () => {
     setFormData((prevData) => {
       const updatedProcedures = isChecked
         ? [...prevData.procedures, { category, procedure }]
-        : prevData.procedures.filter((p) => p.procedure !== procedure);
+        : prevData.procedures.filter(
+            (p) => !(p.category === category && p.procedure === procedure)
+          );
 
       return { ...prevData, procedures: updatedProcedures };
     });
@@ -450,28 +452,6 @@ const DayBookings = () => {
                     {Object.entries(
                       booking.procedures.reduce(
                         (acc, { category, procedure }) => {
-                          const key = `${category}-${procedure}`;
-
-                          // Добавляем процедуру в массив по этому ключу
-                          if (!acc[key]) {
-                            acc[key] = { category, procedure };
-                          }
-                          return acc;
-                        },
-                        {}
-                      )
-                    ).map(([key, { category, procedure }]) => (
-                      <div key={key}>
-                        <p>
-                          {category}: <span>{procedure}</span>
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                  <div className={s.procProcedures}>
-                    {Object.entries(
-                      booking.procedures.reduce(
-                        (acc, { category, procedure }) => {
                           if (!acc[category]) {
                             acc[category] = [];
                           }
@@ -488,6 +468,7 @@ const DayBookings = () => {
                       </div>
                     ))}
                   </div>
+
                   {booking.comment && (
                     <div>
                       <strong>Коментар:</strong> {booking.comment}
