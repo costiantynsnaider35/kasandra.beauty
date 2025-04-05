@@ -284,20 +284,29 @@ const DayBookings = () => {
     );
     const endTime = selectedTime.add(totalDuration, "minute");
 
-    const isTimeBooked = bookings.some((booking) => {
-      const bookingStartTime = dayjs(
-        `${date} ${booking.time}`,
-        "YYYY-MM-DD HH:mm"
-      );
-      const bookingEndTime = bookingStartTime.add(booking.duration, "minute");
+    const isAdmin = true;
 
-      return (
-        selectedTime.isBetween(bookingStartTime, bookingEndTime, null, "[)") ||
-        endTime.isBetween(bookingStartTime, bookingEndTime, null, "(]") ||
-        selectedTime.isSame(bookingEndTime, "minute") ||
-        endTime.isSame(bookingStartTime, "minute")
-      );
-    });
+    const isTimeBooked =
+      !isAdmin &&
+      bookings.some((booking) => {
+        const bookingStartTime = dayjs(
+          `${date} ${booking.time}`,
+          "YYYY-MM-DD HH:mm"
+        );
+        const bookingEndTime = bookingStartTime.add(booking.duration, "minute");
+
+        return (
+          selectedTime.isBetween(
+            bookingStartTime,
+            bookingEndTime,
+            null,
+            "[)"
+          ) ||
+          endTime.isBetween(bookingStartTime, bookingEndTime, null, "(]") ||
+          selectedTime.isSame(bookingEndTime, "minute") ||
+          endTime.isSame(bookingStartTime, "minute")
+        );
+      });
 
     if (isTimeBooked) {
       toast.error("Цей час вже зайнятий! Виберіть інший.");
