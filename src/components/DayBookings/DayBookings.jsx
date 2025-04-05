@@ -609,11 +609,13 @@ const DayBookings = () => {
         <label className={s.timeAdminLabel}>
           Час*:
           <input
-            type="time"
+            type="text"
             name="time"
             value={formData.time}
             onChange={handleChange}
             required
+            pattern="([01]?[0-9]|2[0-3]):([0-5]?[0-9])"
+            title="Введите время в формате HH:mm"
             className={s.timeAdminInput}
           />
         </label>
