@@ -190,6 +190,14 @@ const DayBookings = () => {
       return;
     }
 
+    const isTimeBooked = bookings.some(
+      (booking) => booking.time === newTime && booking.id !== bookingId
+    );
+    if (isTimeBooked) {
+      toast.error("Цей час вже зайнятий! Виберіть інший.");
+      return;
+    }
+
     const updatedBooking = {
       id: bookingId,
       time: newTime,
@@ -282,6 +290,7 @@ const DayBookings = () => {
       },
       0
     );
+
     const endTime = selectedTime.add(totalDuration, "minute");
 
     const isTimeBooked = bookings.some((booking) => {
@@ -293,8 +302,7 @@ const DayBookings = () => {
 
       return (
         selectedTime.isBetween(bookingStartTime, bookingEndTime, null, "[)") ||
-        endTime.isBetween(bookingStartTime, bookingEndTime, null, "(]") ||
-        selectedTime.isSame(bookingEndTime, "minute")
+        endTime.isBetween(bookingStartTime, bookingEndTime, null, "(]")
       );
     });
 
@@ -325,18 +333,11 @@ const DayBookings = () => {
   const handleCheckboxChange = (category, procedure) => (event) => {
     const isChecked = event.target.checked;
     setFormData((prevData) => {
-      const updatedProcedures = prevData.procedures.map((catProcedures) => {
-        if (catProcedures.category === category) {
-          const updatedCategoryProcedures = isChecked
-            ? [...catProcedures.procedures, procedure]
-            : catProcedures.procedures.filter((p) => p !== procedure);
-          return { ...catProcedures, procedures: updatedCategoryProcedures };
-        }
-        return catProcedures;
-      });
-      if (!updatedProcedures.some((item) => item.category === category)) {
-        updatedProcedures.push({ category, procedures: [procedure] });
-      }
+      const updatedProcedures = isChecked
+        ? [...prevData.procedures, { category, procedure }]
+        : prevData.procedures.filter(
+            (p) => !(p.category === category && p.procedure === procedure)
+          );
 
       return { ...prevData, procedures: updatedProcedures };
     });
@@ -478,7 +479,6 @@ const DayBookings = () => {
                       </div>
                     ))}
                   </div>
-
                   {booking.comment && (
                     <div>
                       <strong>Коментар:</strong> {booking.comment}
@@ -595,7 +595,7 @@ const DayBookings = () => {
                         checked={formData.procedures.some(
                           (p) =>
                             p.category === category.category &&
-                            p.procedures.includes(option)
+                            p.procedure === option
                         )}
                         onChange={handleCheckboxChange(
                           category.category,
@@ -611,7 +611,6 @@ const DayBookings = () => {
             </AnimatePresence>
           </div>
         ))}
-
         <label className={s.timeAdminLabel}>
           Час*:
           <input
