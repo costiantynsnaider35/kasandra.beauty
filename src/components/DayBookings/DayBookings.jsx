@@ -294,7 +294,8 @@ const DayBookings = () => {
       return (
         selectedTime.isBetween(bookingStartTime, bookingEndTime, null, "[)") ||
         endTime.isBetween(bookingStartTime, bookingEndTime, null, "(]") ||
-        selectedTime.isSame(bookingEndTime, "minute") // Учитываем, что новая запись может начинаться сразу после завершения предыдущей
+        selectedTime.isSame(bookingEndTime, "minute") ||
+        endTime.isSame(bookingStartTime, "minute")
       );
     });
 
