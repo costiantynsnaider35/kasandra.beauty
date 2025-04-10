@@ -1,0 +1,28 @@
+.developer {
+  text-align: center;
+  padding: 20px 0;
+}
+
+.developerLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #2c3e50;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.developerLink:hover {
+  color: #1d5e8c;
+}
+
+.telegramIcon {
+  flex-shrink: 0;
+  color: #1d5e8c;
+}
+
+.developerLink:hover .telegramIcon {
+  color: #005f8b;
+}
