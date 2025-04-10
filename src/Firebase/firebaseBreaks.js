@@ -23,7 +23,7 @@ export const addBreak = async (breakTime) => {
     toast.success;
     return { id: docRef.id, ...breakTime };
   } catch (error) {
-    toast.Error;
+    toast.error;
     throw new Error(error.message);
   }
 };

@@ -348,9 +348,12 @@ const DayBookings = () => {
       toast.error("Заповніть обидва поля часу для перерви!");
       return;
     }
+
+    const newBreak = { ...breakTime, date };
+
     try {
-      const newBreak = await addBreak(breakTime);
-      setBreaks((prev) => [...prev, newBreak]);
+      const createdBreak = await addBreak(newBreak);
+      setBreaks((prev) => [...prev, createdBreak]);
       toast.success("Перерва встановлена!");
     } catch {
       toast.error("Помилка при встановленні перерви");
