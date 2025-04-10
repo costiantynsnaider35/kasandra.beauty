@@ -6,6 +6,7 @@ import { FaCircleArrowLeft, FaCircleArrowRight } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 import { getHolidays } from "../../Firebase/firebaseHolidays.js";
 import Logout from "../Logout/Logout";
+import Developer from "../Developer/Developer.jsx";
 
 dayjs.locale("uk");
 
@@ -104,6 +105,7 @@ const Bookings = () => {
       </div>
 
       <Logout />
+      <Developer />
     </div>
   );
 };

@@ -11,6 +11,7 @@ import {
   getAllBookingDates,
 } from "../../Firebase/firebaseBookings.js";
 import toast from "react-hot-toast";
+import Developer from "../Developer/Developer.jsx";
 
 dayjs.locale("uk");
 
@@ -104,6 +105,7 @@ const BookingsAdmine = () => {
         </div>
       </div>
       <Logout />
+      <Developer />
     </div>
   );
 };
