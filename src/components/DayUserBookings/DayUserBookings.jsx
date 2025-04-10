@@ -157,7 +157,9 @@ const DayUserBookings = () => {
     setFormData((prevData) => {
       const updatedProcedures = isChecked
         ? [...prevData.procedures, { category, procedure }]
-        : prevData.procedures.filter((p) => p.procedure !== procedure);
+        : prevData.procedures.filter(
+            (p) => !(p.category === category && p.procedure === procedure)
+          );
 
       return { ...prevData, procedures: updatedProcedures };
     });
@@ -467,7 +469,9 @@ const DayUserBookings = () => {
                         name="procedures"
                         value={option}
                         checked={formData.procedures.some(
-                          (p) => p.procedure === option
+                          (p) =>
+                            p.procedure === option &&
+                            p.category === category.category
                         )}
                         onChange={handleCheckboxChange(
                           category.category,
@@ -483,6 +487,7 @@ const DayUserBookings = () => {
             </AnimatePresence>
           </div>
         ))}
+
         <label className={s.timeLabel}>
           Час*:
           <input

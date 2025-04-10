@@ -96,13 +96,32 @@ const DayBookings = () => {
       ),
       data: booking,
     })),
-    ...breaks.map((breakItem) => ({
-      type: "break",
-      id: breakItem.id,
-      startTime: dayjs(`${date} ${breakItem.start}`, "YYYY-MM-DD HH:mm"),
-      endTime: dayjs(`${date} ${breakItem.end}`, "YYYY-MM-DD HH:mm"),
-      data: breakItem,
-    })),
+    ...breaks
+      .map((breakItem) => ({
+        type: "break",
+        id: breakItem.id,
+        startTime: dayjs(`${date} ${breakItem.start}`, "YYYY-MM-DD HH:mm"),
+        endTime: dayjs(`${date} ${breakItem.end}`, "YYYY-MM-DD HH:mm"),
+        data: breakItem,
+      }))
+      .filter((breakItem) => {
+        return !bookings.some((booking) => {
+          const bookingStartTime = dayjs(
+            `${date} ${booking.time}`,
+            "YYYY-MM-DD HH:mm"
+          );
+          const bookingEndTime = bookingStartTime.add(
+            booking.duration,
+            "minute"
+          );
+          return breakItem.startTime.isBetween(
+            bookingStartTime,
+            bookingEndTime,
+            null,
+            "[)"
+          );
+        });
+      }),
   ].sort((a, b) => a.startTime - b.startTime);
 
   useEffect(() => {
@@ -139,12 +158,19 @@ const DayBookings = () => {
 
   useEffect(() => {
     const fetchBreaks = async () => {
-      const breaksList = await getBreaks();
-      setBreaks(breaksList);
+      try {
+        const breaksList = await getBreaks();
+        const filteredBreaks = breaksList.filter(
+          (breakItem) => breakItem.date === date
+        );
+        setBreaks(filteredBreaks);
+      } catch (error) {
+        console.error("Error fetching breaks:", error);
+      }
     };
 
     fetchBreaks();
-  }, []);
+  }, [date]);
 
   const handleSetWorkingDay = async () => {
     if (isNonWorking) {
@@ -344,8 +370,30 @@ const DayBookings = () => {
 
   const handleSetBreak = async (e) => {
     e.preventDefault();
+
     if (!breakTime.start || !breakTime.end) {
       toast.error("Заповніть обидва поля часу для перерви!");
+      return;
+    }
+
+    const startBreak = dayjs(`${date} ${breakTime.start}`, "YYYY-MM-DD HH:mm");
+    const endBreak = dayjs(`${date} ${breakTime.end}`, "YYYY-MM-DD HH:mm");
+
+    const isConflict = combinedList.some((item) => {
+      if (item.type === "booking") {
+        const bookingStartTime = item.startTime;
+        const bookingEndTime = item.endTime;
+
+        return (
+          startBreak.isBefore(bookingEndTime, "minute") &&
+          endBreak.isAfter(bookingStartTime, "minute")
+        );
+      }
+      return false;
+    });
+
+    if (isConflict) {
+      toast.error("Перерва не може перекриватися з записом!");
       return;
     }
 
