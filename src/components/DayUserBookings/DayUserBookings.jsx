@@ -92,16 +92,18 @@ const DayUserBookings = () => {
       ).add(booking.duration, "minute"),
       data: booking,
     })),
-    ...breaks.map((breakItem) => ({
-      type: "break",
-      id: breakItem.id,
-      startTime: dayjs(
-        `${formattedDate} ${breakItem.start}`,
-        "YYYY-MM-DD HH:mm"
-      ),
-      endTime: dayjs(`${formattedDate} ${breakItem.end}`, "YYYY-MM-DD HH:mm"),
-      data: breakItem,
-    })),
+    ...breaks
+      .filter((breakItem) => dayjs(breakItem.date).isSame(selectedDate, "day"))
+      .map((breakItem) => ({
+        type: "break",
+        id: breakItem.id,
+        startTime: dayjs(
+          `${formattedDate} ${breakItem.start}`,
+          "YYYY-MM-DD HH:mm"
+        ),
+        endTime: dayjs(`${formattedDate} ${breakItem.end}`, "YYYY-MM-DD HH:mm"),
+        data: breakItem,
+      })),
   ].sort((a, b) => a.startTime - b.startTime);
 
   useEffect(() => {
@@ -121,11 +123,14 @@ const DayUserBookings = () => {
   useEffect(() => {
     const fetchBreaks = async () => {
       const breaksList = await getBreaks();
-      setBreaks(breaksList);
+      const filteredBreaks = breaksList.filter((breakItem) =>
+        dayjs(breakItem.date).isSame(selectedDate, "day")
+      );
+      setBreaks(filteredBreaks);
     };
 
     fetchBreaks();
-  }, []);
+  }, [selectedDate]);
 
   useEffect(() => {
     if (editingBookingId) {
