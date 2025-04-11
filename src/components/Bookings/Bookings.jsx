@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { getHolidays } from "../../Firebase/firebaseHolidays.js";
 import Logout from "../Logout/Logout";
 import Developer from "../Developer/Developer.jsx";
+import { motion } from "framer-motion";
 
 dayjs.locale("uk");
 
@@ -57,16 +58,40 @@ const Bookings = () => {
   return (
     <div className={s.bookingsContainer}>
       <div className={s.calendarHeader}>
-        <button onClick={handlePrevMonth}>
+        <motion.button onClick={handlePrevMonth} whileTap={{ scale: 0.9 }}>
           <FaCircleArrowLeft />
-        </button>
-        <h2>{currentDate.format("MMMM YYYY")}</h2>
-        <button onClick={handleNextMonth}>
+        </motion.button>
+        <motion.h2
+          drag="x"
+          dragConstraints={{ left: 0, right: 0 }}
+          onDragEnd={(e, { offset }) => {
+            if (offset.x > 100) {
+              handlePrevMonth();
+            } else if (offset.x < -100) {
+              handleNextMonth();
+            }
+          }}
+          whileTap={{ scale: 0.95 }}
+        >
+          {currentDate.format("MM.YYYY")}
+        </motion.h2>
+        <motion.button onClick={handleNextMonth} whileTap={{ scale: 0.9 }}>
           <FaCircleArrowRight />
-        </button>
+        </motion.button>
       </div>
 
-      <div className={s.calendarGrid}>
+      <motion.div
+        className={s.calendarGrid}
+        drag="x"
+        dragConstraints={{ left: 0, right: 0 }}
+        onDragEnd={(e, { offset }) => {
+          if (offset.x > 100) {
+            handlePrevMonth();
+          } else if (offset.x < -100) {
+            handleNextMonth();
+          }
+        }}
+      >
         {["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Нд"].map((day, index) => (
           <div key={index} className={s.weekday}>
             {day}
@@ -91,7 +116,7 @@ const Bookings = () => {
             </div>
           );
         })}
-      </div>
+      </motion.div>
 
       <div className={s.legend}>
         <div className={s.legendItem}>

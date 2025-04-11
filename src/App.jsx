@@ -1,6 +1,6 @@
-import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import "./App.css";
-import { lazy, Suspense, useState, useEffect, useRef } from "react";
+import { lazy, Suspense, useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Toaster } from "react-hot-toast";
 
@@ -54,10 +54,8 @@ const pageTransition = {
 
 const App = () => {
   const location = useLocation();
-  const navigate = useNavigate();
   const [direction, setDirection] = useState(0);
   const [loading, setLoading] = useState(true);
-  const dragStartRef = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
     if (location.state?.direction !== undefined) {
@@ -65,35 +63,6 @@ const App = () => {
     }
     setLoading(false);
   }, [location]);
-
-  const handleDragStart = (event) => {
-    const target = event.target;
-    if (target.tagName === "IMG" || target.closest(".map-container")) {
-      event.preventDefault();
-    } else {
-      dragStartRef.current = { x: event.clientX, y: event.clientY };
-    }
-  };
-
-  const handleDragEnd = (_, { offset, velocity }) => {
-    const currentIndex = routes.indexOf(location.pathname);
-    const dragDistanceX = Math.abs(offset.x);
-    const dragDistanceY = Math.abs(offset.y);
-
-    if (dragDistanceY > dragDistanceX) {
-      return;
-    }
-
-    if (offset.x > 100 || velocity.x > 2) {
-      const prevIndex = (currentIndex - 1 + routes.length) % routes.length;
-      setDirection(-1);
-      navigate(routes[prevIndex], { state: { direction: -1 } });
-    } else if (offset.x < -100 || velocity.x < -2) {
-      const nextIndex = (currentIndex + 1) % routes.length;
-      setDirection(1);
-      navigate(routes[nextIndex], { state: { direction: 1 } });
-    }
-  };
 
   return (
     <div className={`app ${loading ? "loading" : ""}`}>
@@ -116,10 +85,6 @@ const App = () => {
                       exit="out"
                       variants={pageVariants}
                       transition={pageTransition}
-                      drag="x"
-                      dragConstraints={{ left: 0, right: 0 }}
-                      onDragStart={handleDragStart}
-                      onDragEnd={handleDragEnd}
                     >
                       <Component />
                     </motion.div>

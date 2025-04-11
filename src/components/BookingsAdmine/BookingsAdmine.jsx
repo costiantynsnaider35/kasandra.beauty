@@ -12,6 +12,7 @@ import {
 } from "../../Firebase/firebaseBookings.js";
 import toast from "react-hot-toast";
 import Developer from "../Developer/Developer.jsx";
+import { motion } from "framer-motion";
 
 dayjs.locale("uk");
 
@@ -50,7 +51,7 @@ const BookingsAdmine = () => {
       days.push(day);
       day = day.add(1, "day");
     }
-    return days;
+    return days.filter((day) => day.month() === currentDate.month());
   };
 
   const handlePrevMonth = () =>
@@ -62,15 +63,40 @@ const BookingsAdmine = () => {
   return (
     <div className={s.bookingsContainer}>
       <div className={s.calendarHeader}>
-        <button onClick={handlePrevMonth}>
+        <motion.button onClick={handlePrevMonth} whileTap={{ scale: 0.9 }}>
           <FaCircleArrowLeft />
-        </button>
-        <h2>{currentDate.format("MMMM YYYY")}</h2>
-        <button onClick={handleNextMonth}>
+        </motion.button>
+        <motion.h2
+          drag="x"
+          dragConstraints={{ left: 0, right: 0 }}
+          onDragEnd={(e, { offset }) => {
+            if (offset.x > 100) {
+              handlePrevMonth();
+            } else if (offset.x < -100) {
+              handleNextMonth();
+            }
+          }}
+          whileTap={{ scale: 0.95 }}
+        >
+          {currentDate.format("DD.MM.YYYY")}
+        </motion.h2>
+        <motion.button onClick={handleNextMonth} whileTap={{ scale: 0.9 }}>
           <FaCircleArrowRight />
-        </button>
+        </motion.button>
       </div>
-      <div className={s.calendarGrid}>
+
+      <motion.div
+        className={s.calendarGrid}
+        drag="x"
+        dragConstraints={{ left: 0, right: 0 }}
+        onDragEnd={(e, { offset }) => {
+          if (offset.x > 100) {
+            handlePrevMonth();
+          } else if (offset.x < -100) {
+            handleNextMonth();
+          }
+        }}
+      >
         {["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Нд"].map((day, index) => (
           <div key={index} className={s.weekday}>
             {day}
@@ -93,7 +119,8 @@ const BookingsAdmine = () => {
             </div>
           );
         })}
-      </div>
+      </motion.div>
+
       <div className={s.legend}>
         <div className={s.legendItem}>
           <div className={s.workingDay}></div>
