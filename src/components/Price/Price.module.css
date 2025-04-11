@@ -18,6 +18,7 @@
   width: 355px;
   height: 230px;
   object-fit: cover;
+  border-radius: 10px;
 }
 .priceTitle {
   font-size: 32px;

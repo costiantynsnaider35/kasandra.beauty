@@ -15,6 +15,7 @@
   overflow: hidden;
   background-color: #808080;
   color: ghostwhite;
+  border-radius: 10px;
 }
 .bookingsBtn span {
   position: relative;
