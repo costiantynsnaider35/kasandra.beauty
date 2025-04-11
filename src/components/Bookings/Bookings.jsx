@@ -1,7 +1,8 @@
+import { useState, useEffect } from "react";
 import dayjs from "dayjs";
 import "dayjs/locale/uk";
+import weekday from "dayjs/plugin/weekday";
 import s from "./Bookings.module.css";
-import { useState, useEffect } from "react";
 import { FaCircleArrowLeft, FaCircleArrowRight } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 import { getHolidays } from "../../Firebase/firebaseHolidays.js";
@@ -10,6 +11,7 @@ import Developer from "../Developer/Developer.jsx";
 import { motion } from "framer-motion";
 
 dayjs.locale("uk");
+dayjs.extend(weekday);
 
 const Bookings = () => {
   const [currentDate, setCurrentDate] = useState(dayjs());
@@ -26,34 +28,31 @@ const Bookings = () => {
   }, []);
 
   const generateDays = (currentDate) => {
-    const startOfMonth = currentDate.startOf("month").startOf("week");
+    const startOfMonth = currentDate.startOf("month");
+    const startOfWeek = startOfMonth.weekday();
     const endOfMonth = currentDate.endOf("month").endOf("week");
-
     const days = [];
     let day = startOfMonth;
 
+    for (let i = 0; i < startOfWeek; i++) {
+      days.push(null);
+    }
+
     while (day.isBefore(endOfMonth, "day")) {
-      days.push(day);
+      if (day.month() === currentDate.month()) {
+        days.push(day);
+      }
       day = day.add(1, "day");
     }
 
     return days;
   };
 
-  const days = generateDays(currentDate);
-
-  const handlePrevMonth = () => {
+  const handlePrevMonth = () =>
     setCurrentDate(currentDate.subtract(1, "month"));
-  };
-
-  const handleNextMonth = () => {
-    setCurrentDate(currentDate.add(1, "month"));
-  };
-
-  const handleDayClick = (day) => {
-    const formattedDate = day.format("YYYY-MM-DD");
-    navigate(`/bookings/day/${formattedDate}`);
-  };
+  const handleNextMonth = () => setCurrentDate(currentDate.add(1, "month"));
+  const handleDayClick = (day) =>
+    navigate(`/bookings/day/${day.format("YYYY-MM-DD")}`);
 
   return (
     <div className={s.bookingsContainer}>
@@ -98,19 +97,21 @@ const Bookings = () => {
           </div>
         ))}
 
-        {days.map((day, index) => {
-          const isToday = day.isSame(dayjs(), "day");
-          const isCurrentMonth = day.isSame(currentDate, "month");
-          const isHoliday = holidays.includes(day.format("YYYY-MM-DD"));
+        {generateDays(currentDate).map((day, index) => {
+          if (day === null) {
+            return <div key={index} className={s.emptyDay}></div>;
+          }
+
+          const formattedDate = day.format("YYYY-MM-DD");
+          const isNonWorking = holidays.includes(formattedDate);
+          const isToday = day.isSame(dayjs(), "date");
 
           return (
             <div
               key={index}
-              className={`${s.day} ${isCurrentMonth ? "" : s.outsideMonth} ${
-                isToday ? s.today : ""
-              } ${isHoliday ? s.nonWorkingDay : ""}`}
-              onClick={!isHoliday ? () => handleDayClick(day) : undefined}
-              style={isHoliday ? { pointerEvents: "none", opacity: 0.5 } : {}}
+              className={`${s.day} ${isNonWorking ? s.nonWorkingDay : ""} 
+                ${isToday ? s.today : ""}`}
+              onClick={() => handleDayClick(day)}
             >
               {day.date()}
             </div>

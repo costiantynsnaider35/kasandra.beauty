@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import dayjs from "dayjs";
 import "dayjs/locale/uk";
+import weekday from "dayjs/plugin/weekday";
 import s from "./BookingsAdmine.module.css";
 import { FaCircleArrowLeft, FaCircleArrowRight } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
@@ -15,6 +16,7 @@ import Developer from "../Developer/Developer.jsx";
 import { motion } from "framer-motion";
 
 dayjs.locale("uk");
+dayjs.extend(weekday);
 
 const BookingsAdmine = () => {
   const [currentDate, setCurrentDate] = useState(dayjs());
@@ -42,16 +44,26 @@ const BookingsAdmine = () => {
   }, []);
 
   const generateDays = (currentDate) => {
-    const startOfMonth = currentDate.startOf("month").startOf("week");
+    const startOfMonth = currentDate.startOf("month");
+    const startOfWeek = startOfMonth.weekday();
     const endOfMonth = currentDate.endOf("month").endOf("week");
     const days = [];
     let day = startOfMonth;
 
+    for (let i = 0; i < startOfWeek; i++) {
+      days.push(null);
+    }
+
     while (day.isBefore(endOfMonth, "day")) {
-      days.push(day);
+      if (day.month() === currentDate.month()) {
+        days.push(day);
+      } else {
+        break;
+      }
       day = day.add(1, "day");
     }
-    return days.filter((day) => day.month() === currentDate.month());
+
+    return days;
   };
 
   const handlePrevMonth = () =>
@@ -102,10 +114,15 @@ const BookingsAdmine = () => {
             {day}
           </div>
         ))}
+
         {generateDays(currentDate).map((day, index) => {
+          if (day === null) {
+            return <div key={index} className={s.emptyDay}></div>;
+          }
+
           const formattedDate = day.format("YYYY-MM-DD");
           const isNonWorking = holidays.includes(formattedDate);
-          const isToday = day.isSame(dayjs(), "day");
+          const isToday = day.isSame(dayjs(), "date");
           const isBooked = bookedDates.includes(formattedDate);
 
           return (
