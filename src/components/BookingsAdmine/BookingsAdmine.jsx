@@ -78,7 +78,7 @@ const BookingsAdmine = () => {
           }}
           whileTap={{ scale: 0.95 }}
         >
-          {currentDate.format("DD.MM.YYYY")}
+          {currentDate.format("MM.YYYY")}
         </motion.h2>
         <motion.button onClick={handleNextMonth} whileTap={{ scale: 0.9 }}>
           <FaCircleArrowRight />
