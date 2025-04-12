@@ -40,7 +40,7 @@
   font-family: inherit;
   font-weight: 500;
   color: black;
-  background-color: #085aad;
+  background-color: #4d4d4d;
 }
 
 .loginButton:hover {
@@ -97,7 +97,7 @@
   font-family: inherit;
   font-weight: 500;
   color: black;
-  background-color: #c0c0c0;
+  background-color: #e0e0e0;
 }
 .passwordWrapper {
   position: relative;
