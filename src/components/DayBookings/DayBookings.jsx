@@ -78,7 +78,7 @@ const DayBookings = () => {
   const [openIndex, setOpenIndex] = useState(null);
   const [formData, setFormData] = useState({
     fullName: "",
-    phoneNumber: "",
+    phoneNumber: "+380",
     procedures: [],
     time: "",
     comment: "",

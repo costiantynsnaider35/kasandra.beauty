@@ -74,7 +74,7 @@ const DayUserBookings = () => {
   const [breaks, setBreaks] = useState([]);
   const [formData, setFormData] = useState({
     fullName: "",
-    phoneNumber: "",
+    phoneNumber: "+380",
     procedures: [],
     time: "",
     comment: "",
