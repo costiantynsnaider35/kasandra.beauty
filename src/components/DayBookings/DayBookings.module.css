@@ -314,3 +314,10 @@
   font-size: 20px;
   font-weight: 700;
 }
+.redDay {
+  color: #ec0a0a;
+}
+
+.defaultDay {
+  color: black;
+}

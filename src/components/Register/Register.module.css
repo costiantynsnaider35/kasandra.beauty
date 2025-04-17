@@ -39,42 +39,8 @@
   border: none;
   font-family: inherit;
   font-weight: 500;
-  color: black;
+  color: #e83b57;
   background-color: #4d4d4d;
-}
-
-.registerButton:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-  font-weight: bold;
-}
-
-.registerButton:active {
-  transform: translateY(-1px);
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-  font-weight: bold;
-}
-
-.registerButton::after {
-  content: "";
-  display: inline-block;
-  height: 100%;
-  width: 100%;
-  border-radius: 100px;
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: -1;
-  transition: all 0.4s;
-}
-
-.registerButton::after {
-  background-color: #5ba2ea;
-}
-
-.registerButton:hover::after {
-  transform: scaleX(1.4) scaleY(1.6);
-  opacity: 0;
 }
 
 .toggleRegister {
@@ -97,8 +63,8 @@
   border: none;
   font-family: inherit;
   font-weight: 500;
-  color: black;
-  background-color: #c0c0c0;
+  color: #da092c;
+  background-color: #e0e0e0;
 }
 .passwordWrapper {
   position: relative;

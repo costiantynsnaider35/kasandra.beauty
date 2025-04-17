@@ -418,10 +418,14 @@ const DayBookings = () => {
     }
   };
 
+  const dayName = dayjs(date).format("dddd").toLowerCase();
+  const isRedDay = ["понеділок", "середа", "п’ятниця"].includes(dayName);
+
   return (
     <div className={s.dayContainer}>
-      <h2>{dayjs(date).format("DD MMMM YYYY")}</h2>
-
+      <h2 className={isRedDay ? s.redDay : s.defaultDay}>
+        {dayName.toUpperCase()}, {dayjs(date).format("DD.MM.YYYY")}
+      </h2>
       <div className={s.buttonGroup}>
         <button
           className={`${s.buttonAdminWork} ${

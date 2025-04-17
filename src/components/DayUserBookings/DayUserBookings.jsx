@@ -69,7 +69,9 @@ const DayUserBookings = () => {
   const [userId, setUserId] = useState(null);
   const selectedDate = date ? dayjs(date) : dayjs();
   const formattedDate = selectedDate.format("YYYY-MM-DD");
-  const displayDate = selectedDate.format("D MMMM");
+  const displayDate = `${selectedDate.format("dddd")}, ${selectedDate.format(
+    "DD.MM.YYYY"
+  )}`;
   const [bookings, setBookings] = useState([]);
   const [breaks, setBreaks] = useState([]);
   const [formData, setFormData] = useState({
@@ -201,6 +203,15 @@ const DayUserBookings = () => {
 
     if (!selectedTime.isValid()) {
       toast.error("Невірний формат часу. Введіть час у форматі HH:mm!");
+      return;
+    }
+
+    const dayOfWeek = selectedDate.day();
+
+    const limitTime = selectedTime.set("hour", 16).set("minute", 59);
+
+    if ([1, 3, 5].includes(dayOfWeek) && selectedTime.isAfter(limitTime)) {
+      toast.error("Вибачте,сьогодні записи лише до 17:00!");
       return;
     }
 
