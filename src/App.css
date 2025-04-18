@@ -15,12 +15,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: repeating-linear-gradient(
-    45deg,
-    #999999,
-    #999999 2px,
-    #828282 4px
-  );
+  background: #cecdcd;
   background-blend-mode: lighten;
   box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.4),
     inset 0 -1px 1px rgba(0, 0, 0, 0.1);
@@ -32,10 +27,4 @@
 .app.loading::before {
   opacity: 0;
   transform: scale(1.05);
-}
-
-@media only screen and (max-width: 768px) {
-  .app::before {
-    background-attachment: scroll;
-  }
 }
