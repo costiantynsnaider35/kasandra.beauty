@@ -18,7 +18,8 @@ import { motion } from "framer-motion";
 dayjs.locale("uk");
 dayjs.extend(weekday);
 
-const BookingsAdmine = () => {
+const BookingsAdmine = ({ setCurrentMonth }) => {
+  // Получаем setCurrentMonth как пропс
   const [currentDate, setCurrentDate] = useState(dayjs());
   const [holidays, setHolidays] = useState([]);
   const [bookedDates, setBookedDates] = useState([]);
@@ -42,6 +43,12 @@ const BookingsAdmine = () => {
   useEffect(() => {
     deleteOldBookings();
   }, []);
+
+  // Обновляем месяц в родительском компоненте
+  useEffect(() => {
+    const monthKey = `${currentDate.year()}-${currentDate.month() + 1}`;
+    setCurrentMonth(monthKey); // Отправляем текущий месяц родительскому компоненту
+  }, [currentDate, setCurrentMonth]);
 
   const generateDays = (currentDate) => {
     const startOfMonth = currentDate.startOf("month");

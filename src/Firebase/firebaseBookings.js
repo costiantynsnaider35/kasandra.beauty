@@ -12,25 +12,23 @@ import {
 } from "firebase/firestore";
 import { toast } from "react-hot-toast";
 
-// Форматирование даты в формате 20.03.25
 const formatDate = (date) => {
   const day = String(date.getDate()).padStart(2, "0");
   const month = String(date.getMonth() + 1).padStart(2, "0");
-  const year = String(date.getFullYear()).slice(2); // Берем последние 2 цифры года
+  const year = String(date.getFullYear()).slice(2);
   return `${day}.${month}.${year}`;
 };
 
 // Форматирование времени
 const formatTime = (time) => {
-  return time.slice(0, 5); // Получаем только время без секунд
+  return time.slice(0, 5);
 };
 
-// Функция для определения пола пользователя по имени
 const getGender = (name) => {
-  if (!name) return "unknown"; // Если name не определено, возвращаем "unknown"
+  if (!name) return "unknown";
 
-  const femaleEndings = ["а", "я"]; // Окончания для женских имен
-  const maleEndings = ["й", "н", "в", "р", "с"]; // Окончания для мужских имен
+  const femaleEndings = ["а", "я"];
+  const maleEndings = ["й", "н", "в", "р", "с"];
 
   const lastChar = name.slice(-1).toLowerCase();
 
@@ -41,10 +39,9 @@ const getGender = (name) => {
     return "male";
   }
 
-  return "unknown"; // Если не удалось определить пол
+  return "unknown";
 };
 
-// Функция для формирования сообщения в зависимости от пола и действия
 const getActionMessage = (name, action) => {
   const gender = getGender(name);
   switch (action) {
@@ -121,13 +118,11 @@ export const addBooking = async (booking) => {
       );
     }
 
-    // Добавляем новую запись в базу данных
     const docRef = await addDoc(collection(db, "bookings"), {
       ...booking,
       uid: user.uid,
     });
 
-    // Форматируем дату и время для отображения
     const formattedDate = formatDate(new Date());
     const formattedTime = formatTime(new Date().toLocaleTimeString());
 
@@ -177,11 +172,9 @@ export const updateBooking = async (id, updatedBooking) => {
 
     const oldBooking = bookingSnap.data();
 
-    // Форматируем дату и время для отображения
     const formattedDate = formatDate(new Date());
     const formattedTime = formatTime(new Date().toLocaleTimeString());
 
-    // Формируем сообщение
     let message = `${updatedBooking.fullName} ${getActionMessage(
       updatedBooking.fullName,
       "update"
@@ -217,7 +210,6 @@ export const updateBooking = async (id, updatedBooking) => {
     // Обновляем только измененные данные
     await updateDoc(bookingRef, updatedBooking);
 
-    // Отправка уведомления в Telegram, если пользователь не администратор
     if (!admin) {
       sendTelegramMessage(message);
     }
@@ -270,7 +262,6 @@ export const deleteBooking = async (id) => {
 
     const bookingData = bookingSnap.data();
 
-    // Формируем сообщение для уведомления
     const formattedDate = formatDate(new Date());
     const formattedTime = formatTime(new Date().toLocaleTimeString());
 
@@ -283,10 +274,8 @@ ${bookingData.date} на ${bookingData.time}
 Дата видалення запису: ${formattedDate}
 Час видалення запису: ${formattedTime}`;
 
-    // Удаляем запись
     await deleteDoc(bookingRef);
 
-    // Отправка уведомления в Telegram, если пользователь не администратор
     if (!admin) {
       sendTelegramMessage(message, "MarkdownV2");
     }
@@ -340,5 +329,102 @@ export const deleteOldBookings = async () => {
     });
   } catch {
     console.error;
+  }
+};
+
+export const getMonthlyStats = async () => {
+  try {
+    const allDocs = await getDocs(collection(db, "bookings"));
+    const bookings = allDocs.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+
+    const now = new Date();
+
+    const services = [
+      {
+        title: "Манікюр",
+        items: [
+          { description: "з покриттям", price: 750 },
+          { description: "френч", price: 100 },
+          { description: "без покриття", price: 350 },
+          { description: "корекція нарощених нігтів", price: 800 },
+          { description: "нарощування", price: 1000 },
+          { description: "арт френч", price: 2500 },
+          { description: "чоловічий", price: 450 },
+        ],
+      },
+      {
+        title: "Педикюр",
+        items: [
+          { description: "чищення", price: 500 },
+          { description: "подологічний", price: 600 },
+          { description: "з покриттям", price: 800 },
+          { description: "чоловічий", price: 600 },
+        ],
+      },
+      {
+        title: "Брови",
+        items: [
+          { description: "корекція воском", price: 250 },
+          { description: "корекція з фарбуванням", price: 400 },
+        ],
+      },
+    ];
+
+    const getProcedurePrice = (category, procedure) => {
+      const serviceCategory = services.find(
+        (service) => service.title === category
+      );
+      if (serviceCategory) {
+        const item = serviceCategory.items.find(
+          (item) => item.description === procedure
+        );
+        return item ? item.price : 0;
+      }
+      return 0;
+    };
+
+    const pastBookings = bookings.filter((booking) => {
+      if (!booking.date) return false;
+
+      const [year, month, day] = booking.date.split("-").map(Number);
+      const bookingDate = new Date(year, month - 1, day);
+
+      return bookingDate <= now;
+    });
+
+    // Создаем статистику по месяцам
+    const monthlyStats = pastBookings.reduce((stats, booking) => {
+      const [year, month] = booking.date.split("-").map(Number);
+
+      const key = `${year}-${month}`;
+
+      if (!stats[key]) {
+        stats[key] = {
+          clientsCount: 0,
+          uniqueClients: new Set(),
+          totalAmount: 0,
+        };
+      }
+
+      stats[key].uniqueClients.add(booking.fullName);
+
+      // Считаем стоимость процедур для этого бронирования
+      booking.procedures.forEach((procedure) => {
+        const price = getProcedurePrice(
+          procedure.category,
+          procedure.procedure
+        );
+        stats[key].totalAmount += price;
+      });
+
+      stats[key].clientsCount = stats[key].uniqueClients.size;
+
+      return stats;
+    }, {});
+
+    return monthlyStats;
+  } catch (error) {
+    console.error("Помилка отримання статистики за місяць:", error);
+    return {};
   }
 };
