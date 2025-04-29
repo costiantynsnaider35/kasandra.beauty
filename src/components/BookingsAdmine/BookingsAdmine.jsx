@@ -4,7 +4,7 @@ import "dayjs/locale/uk";
 import weekday from "dayjs/plugin/weekday";
 import s from "./BookingsAdmine.module.css";
 import { FaCircleArrowLeft, FaCircleArrowRight } from "react-icons/fa6";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Logout from "../Logout/Logout";
 import { getHolidays } from "../../Firebase/firebaseHolidays.js";
 import {
@@ -156,6 +156,11 @@ const BookingsAdmine = ({ setCurrentMonth }) => {
         </div>
       </div>
       <Logout />
+      <div className={s.buttonContainer}>
+        <Link to="/admin/stats">
+          <button className={s.statsButton}>Переглянути статистику</button>
+        </Link>
+      </div>
       <Developer />
     </div>
   );
