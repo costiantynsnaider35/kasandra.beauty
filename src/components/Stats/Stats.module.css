@@ -1,0 +1,38 @@
+.container {
+  width: 100%;
+  padding: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #4a90e2;
+  text-align: center;
+}
+
+.chartTitle {
+  font-size: 24px;
+  font-weight: 500;
+  color: #333;
+}
+
+.chartSection {
+  width: 355px;
+  height: 300px;
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.backButton {
+  background-color: #4a90e2;
+  color: white;
+  font-size: 16px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}

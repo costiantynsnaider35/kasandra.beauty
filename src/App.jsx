@@ -17,6 +17,7 @@ const LoginPage = lazy(() => import("./pages/LoginPage/LoginPage"));
 const AdminPage = lazy(() => import("./pages/AdminPage/AdminPage"));
 const DayPage = lazy(() => import("./pages/DayPage/DayPage"));
 const DayUserPage = lazy(() => import("./pages/DayUserPage/DayUserPage"));
+const StatsPage = lazy(() => import("./pages/StatsPage/StatsPage"));
 
 const routeComponents = {
   "/": HomePage,
@@ -30,6 +31,7 @@ const routeComponents = {
   "/login": LoginPage,
   "/admin": AdminPage,
   "/admin/day/:date": DayPage,
+  "/admin/stats": StatsPage,
 };
 
 const routes = Object.keys(routeComponents);

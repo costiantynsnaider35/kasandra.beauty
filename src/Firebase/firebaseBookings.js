@@ -19,7 +19,6 @@ const formatDate = (date) => {
   return `${day}.${month}.${year}`;
 };
 
-// Форматирование времени
 const formatTime = (time) => {
   return time.slice(0, 5);
 };
@@ -339,6 +338,12 @@ export const getMonthlyStats = async () => {
 
     const now = new Date();
 
+    // Функция для преобразования времени в минутное значение (для сравнения)
+    const parseTime = (timeStr) => {
+      const [hours, minutes] = timeStr.split(":").map(Number);
+      return hours * 60 + minutes;
+    };
+
     const services = [
       {
         title: "Манікюр",
@@ -378,24 +383,39 @@ export const getMonthlyStats = async () => {
         const item = serviceCategory.items.find(
           (item) => item.description === procedure
         );
-        return item ? item.price : 0;
+        if (item) {
+          return item.price;
+        } else {
+          console.log(
+            `Процедура не найдена: ${procedure} в категорії ${category}`
+          );
+        }
+      } else {
+        console.log(`Категорія не знайдена: ${category}`);
       }
-      return 0;
+      return 0; // Если процедура не найдена, возвращаем 0
     };
 
     const pastBookings = bookings.filter((booking) => {
-      if (!booking.date) return false;
+      if (!booking.date || !booking.time) return false;
 
       const [year, month, day] = booking.date.split("-").map(Number);
       const bookingDate = new Date(year, month - 1, day);
 
-      return bookingDate <= now;
+      const bookingTimeInMinutes = parseTime(booking.time);
+      const nowTimeInMinutes = now.getHours() * 60 + now.getMinutes();
+
+      // Сравниваем дату и время (должно быть прошедшим)
+      return (
+        bookingDate < now ||
+        (bookingDate.getTime() === now.getTime() &&
+          bookingTimeInMinutes < nowTimeInMinutes)
+      );
     });
 
     // Создаем статистику по месяцам
     const monthlyStats = pastBookings.reduce((stats, booking) => {
       const [year, month] = booking.date.split("-").map(Number);
-
       const key = `${year}-${month}`;
 
       if (!stats[key]) {
@@ -414,7 +434,11 @@ export const getMonthlyStats = async () => {
           procedure.category,
           procedure.procedure
         );
-        stats[key].totalAmount += price;
+        if (price > 0) {
+          stats[key].totalAmount += price;
+        } else {
+          console.log(`Ошибка в цене для процедури: ${procedure.procedure}`);
+        }
       });
 
       stats[key].clientsCount = stats[key].uniqueClients.size;
