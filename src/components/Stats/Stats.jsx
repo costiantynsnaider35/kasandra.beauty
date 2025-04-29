@@ -1,16 +1,19 @@
 import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
+  LineController,
+  LineElement,
+  PointElement,
+  BarController,
+  BarElement,
   CategoryScale,
   LinearScale,
-  BarElement,
   Title,
   Tooltip,
   Legend,
-  LineElement,
-  PointElement,
   Filler,
 } from "chart.js";
+
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import { useEffect, useState } from "react";
 import { getMonthlyStats } from "../../Firebase/firebaseBookings.js";
@@ -19,14 +22,16 @@ import s from "./Stats.module.css";
 import { useNavigate } from "react-router-dom";
 
 ChartJS.register(
+  LineController,
+  BarController,
+  LineElement,
+  PointElement,
+  BarElement,
   CategoryScale,
   LinearScale,
-  BarElement,
   Title,
   Tooltip,
   Legend,
-  LineElement,
-  PointElement,
   Filler,
   ChartDataLabels
 );
