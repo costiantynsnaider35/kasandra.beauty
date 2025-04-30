@@ -234,6 +234,11 @@ const Stats = () => {
     },
   };
 
+  const totalSum = Object.values(stats).reduce(
+    (acc, item) => acc + item.totalAmount,
+    0
+  );
+
   return (
     <div>
       {loading ? (
@@ -252,6 +257,7 @@ const Stats = () => {
             <h2 className={s.chartTitle}>Сума(грн)</h2>
             <Bar data={chartDataSum} options={chartOptionsSum} />
           </div>
+          <p className={s.totalAmount}>Сума всього: {totalSum} грн</p>
           <button className={s.backButton} onClick={() => navigate("/admin")}>
             Назад
           </button>

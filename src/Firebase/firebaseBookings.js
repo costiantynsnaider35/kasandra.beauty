@@ -338,7 +338,6 @@ export const getMonthlyStats = async () => {
 
     const now = new Date();
 
-    // Функция для преобразования времени в минутное значение (для сравнения)
     const parseTime = (timeStr) => {
       const [hours, minutes] = timeStr.split(":").map(Number);
       return hours * 60 + minutes;
@@ -393,27 +392,19 @@ export const getMonthlyStats = async () => {
       } else {
         console.log(`Категорія не знайдена: ${category}`);
       }
-      return 0; // Если процедура не найдена, возвращаем 0
+      return 0;
     };
 
     const pastBookings = bookings.filter((booking) => {
       if (!booking.date || !booking.time) return false;
 
       const [year, month, day] = booking.date.split("-").map(Number);
-      const bookingDate = new Date(year, month - 1, day);
+      const [hours, minutes] = booking.time.split(":").map(Number);
+      const bookingDateTime = new Date(year, month - 1, day, hours, minutes);
 
-      const bookingTimeInMinutes = parseTime(booking.time);
-      const nowTimeInMinutes = now.getHours() * 60 + now.getMinutes();
-
-      // Сравниваем дату и время (должно быть прошедшим)
-      return (
-        bookingDate < now ||
-        (bookingDate.getTime() === now.getTime() &&
-          bookingTimeInMinutes < nowTimeInMinutes)
-      );
+      return bookingDateTime <= now;
     });
 
-    // Создаем статистику по месяцам
     const monthlyStats = pastBookings.reduce((stats, booking) => {
       const [year, month] = booking.date.split("-").map(Number);
       const key = `${year}-${month}`;
@@ -428,7 +419,6 @@ export const getMonthlyStats = async () => {
 
       stats[key].uniqueClients.add(booking.fullName);
 
-      // Считаем стоимость процедур для этого бронирования
       booking.procedures.forEach((procedure) => {
         const price = getProcedurePrice(
           procedure.category,

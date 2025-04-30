@@ -156,7 +156,7 @@ const BookingsAdmine = ({ setCurrentMonth }) => {
         </div>
       </div>
       <Logout />
-      <div className={s.buttonContainer}>
+      <div>
         <Link to="/admin/stats">
           <button className={s.statsButton}>Переглянути статистику</button>
         </Link>
