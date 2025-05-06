@@ -72,6 +72,7 @@ const DayBookings = () => {
   const { date } = useParams();
   const navigate = useNavigate();
 
+  // Основные состояния
   const [isNonWorking, setIsNonWorking] = useState(false);
   const [bookings, setBookings] = useState([]);
   const [editingTimeId, setEditingTimeId] = useState(null);
@@ -87,8 +88,22 @@ const DayBookings = () => {
   const [breakTime, setBreakTime] = useState({ start: "", end: "" });
   const [breaks, setBreaks] = useState([]);
 
-  const [isMarinaWorking, setIsMarinaWorking] = useState(false); // Новое состояние
+  // Состояние для работников
+  const [workers, setWorkers] = useState({
+    Marina: null,
+    Kristina: null,
+  });
 
+  const [editWorker, setEditWorker] = useState({
+    name: null,
+    Marina: { start: "", end: "" },
+    Kristina: { start: "", end: "" },
+  });
+
+  // Валидация формата времени
+  const isValidTime = (time) => /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/.test(time);
+
+  // Объединённый список записей и перерывов
   const combinedList = [
     ...bookings.map((booking) => ({
       type: "booking",
@@ -128,6 +143,7 @@ const DayBookings = () => {
       }),
   ].sort((a, b) => a.startTime - b.startTime);
 
+  // Загрузка данных о праздниках и записях
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -153,13 +169,10 @@ const DayBookings = () => {
         console.error("Error fetching data:", error);
       }
     };
-
-    const savedMarina = localStorage.getItem(`marina-${date}`);
-    setIsMarinaWorking(savedMarina === "true");
-
     fetchData();
   }, [date]);
 
+  // Загрузка перерив
   useEffect(() => {
     const fetchBreaks = async () => {
       try {
@@ -175,6 +188,73 @@ const DayBookings = () => {
     fetchBreaks();
   }, [date]);
 
+  // Загрузка графика работников из localStorage
+  useEffect(() => {
+    const savedMarina = localStorage.getItem(`worker-Marina-${date}`);
+    const savedKristina = localStorage.getItem(`worker-Kristina-${date}`);
+
+    setWorkers({
+      Marina: savedMarina ? JSON.parse(savedMarina) : null,
+      Kristina: savedKristina ? JSON.parse(savedKristina) : null,
+    });
+  }, [date]);
+
+  // Функции работы с работниками
+  const saveWorkerToLocalStorage = (name, data) => {
+    if (!isValidTime(data.start) || !isValidTime(data.end)) {
+      toast.error("Введіть коректний час у форматі HH:mm");
+      return;
+    }
+
+    localStorage.setItem(`worker-${name}-${date}`, JSON.stringify(data));
+    setWorkers((prev) => ({ ...prev, [name]: data }));
+    toast.success(`${name === "Marina" ? "Марина" : "Крістіна"} збережена`);
+  };
+
+  const removeWorkerFromLocalStorage = (name) => {
+    localStorage.removeItem(`worker-${name}-${date}`);
+    setWorkers((prev) => ({ ...prev, [name]: null }));
+    toast.success(`${name === "Marina" ? "Марина" : "Крістіна"} видалена`);
+  };
+
+  const handleEditWorker = (name, field, value) => {
+    setEditWorker((prev) => ({
+      ...prev,
+      [name]: {
+        ...prev[name],
+        [field]: value,
+      },
+    }));
+  };
+
+  const startEditWorker = (name) => {
+    const workerData = workers[name] || { start: "", end: "" };
+    setEditWorker((prev) => ({
+      ...prev,
+      name,
+      [name]: { ...workerData },
+    }));
+  };
+
+  const saveEditedWorker = () => {
+    const { name } = editWorker;
+
+    const data = editWorker[name];
+
+    if (!isValidTime(data.start) || !isValidTime(data.end)) {
+      toast.error("Введіть коректний час у форматі HH:mm");
+      return;
+    }
+
+    saveWorkerToLocalStorage(name, data);
+    setEditWorker({
+      name: null,
+      Marina: { start: "", end: "" },
+      Kristina: { start: "", end: "" },
+    });
+  };
+
+  // Установка рабочего / не рабочего дня
   const handleSetWorkingDay = async () => {
     if (isNonWorking) {
       await deleteHoliday(date);
@@ -189,6 +269,7 @@ const DayBookings = () => {
     }
   };
 
+  // Редактирование времени записи
   const handleEditTime = (bookingId, currentTime) => {
     setEditingTimeId(bookingId);
     setNewTime(currentTime);
@@ -240,6 +321,7 @@ const DayBookings = () => {
     }
   };
 
+  // Удаление записи
   const handleDelete = async (bookingId) => {
     try {
       const bookingIdStr = String(bookingId);
@@ -261,6 +343,7 @@ const DayBookings = () => {
     }
   };
 
+  // Форма клиента
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -328,6 +411,7 @@ const DayBookings = () => {
     }
   };
 
+  // Выбор процедур
   const handleCheckboxChange = (category, procedure) => (event) => {
     const isChecked = event.target.checked;
     setFormData((prevData) => {
@@ -340,6 +424,7 @@ const DayBookings = () => {
     });
   };
 
+  // Перерыва
   const handleBreakTimeChange = (e) => {
     const { name, value } = e.target;
     setBreakTime((prev) => ({ ...prev, [name]: value }));
@@ -381,13 +466,14 @@ const DayBookings = () => {
   const handleDeleteBreak = async (breakId) => {
     try {
       await deleteBreak(breakId);
-      setBreaks((prev) => prev.filter((breakItem) => breakItem.id !== breakId));
+      setBreaks((prev) => prev.filter((b) => b.id !== breakId));
       toast.success("Перерва видалена!");
     } catch {
       toast.error("Помилка при видаленні перерви");
     }
   };
 
+  // День недели
   const dayName = dayjs(date).format("dddd").toLowerCase();
   const isRedDay = ["понеділок", "середа", "п’ятниця"].includes(dayName);
 
@@ -396,6 +482,8 @@ const DayBookings = () => {
       <h2 className={isRedDay ? s.redDay : s.defaultDay}>
         {dayName.toUpperCase()}, {dayjs(date).format("DD.MM.YYYY")}
       </h2>
+
+      {/* Робочий / Не робочий день */}
       <div className={s.buttonGroup}>
         <button
           className={`${s.buttonAdminWork} ${
@@ -403,7 +491,7 @@ const DayBookings = () => {
           }`}
           onClick={handleSetWorkingDay}
         >
-          Робочий
+          Робочий день
         </button>
         <button
           className={`${s.buttonAdminWork} ${
@@ -411,26 +499,194 @@ const DayBookings = () => {
           }`}
           onClick={handleSetNonWorkingDay}
         >
-          Не робочий
-        </button>
-        <button
-          className={`${s.buttonAdminWork} ${
-            isMarinaWorking ? s.buttonAdminMarinaActive : s.buttonAdminMarina
-          }`}
-          onClick={() => {
-            const newValue = !isMarinaWorking;
-            setIsMarinaWorking(newValue);
-            localStorage.setItem(`marina-${date}`, String(newValue));
-          }}
-        >
-          {isMarinaWorking ? "Марина працює " : "Марина не працює"}
+          Не робочий день
         </button>
       </div>
 
-      {isMarinaWorking && (
-        <p className={s.marinaNote}>👩‍⚕️ Сьогодні працює Марина</p>
-      )}
+      {/* Блоки с работниками */}
+      <div className={s.workerTwoColumnContainer}>
+        {/* Марина працює */}
+        <div className={s.workerColumn}>
+          <h3>Марина</h3>
+          {!workers.Marina && editWorker.name !== "Marina" && (
+            <div className={s.timeInputs}>
+              <div className={s.timeInputsRow}>
+                <label>
+                  <input
+                    type="time"
+                    value={editWorker.Marina.start}
+                    onChange={(e) =>
+                      handleEditWorker("Marina", "start", e.target.value)
+                    }
+                  />
+                </label>
+                <label>
+                  <input
+                    type="time"
+                    value={editWorker.Marina.end}
+                    onChange={(e) =>
+                      handleEditWorker("Marina", "end", e.target.value)
+                    }
+                  />
+                </label>
+              </div>
 
+              <button
+                className={s.saveWorkerBtn}
+                onClick={() =>
+                  saveWorkerToLocalStorage("Marina", {
+                    start: editWorker.Marina.start,
+                    end: editWorker.Marina.end,
+                  })
+                }
+              >
+                Зберегти
+              </button>
+            </div>
+          )}
+
+          {workers.Marina && editWorker.name !== "Marina" && (
+            <div>
+              <p>
+                Марина працює з {workers.Marina.start} до {workers.Marina.end}
+              </p>
+              <div className={s.workerActions}>
+                <button
+                  className={s.editWorkerBtn}
+                  onClick={() => startEditWorker("Marina")}
+                >
+                  Редагувати
+                </button>
+                <button
+                  className={s.deleteWorkerBtn}
+                  onClick={() => removeWorkerFromLocalStorage("Marina")}
+                >
+                  Видалити
+                </button>
+              </div>
+            </div>
+          )}
+
+          {editWorker.name === "Marina" && (
+            <div>
+              <label>
+                <input
+                  type="time"
+                  value={editWorker.Marina.start}
+                  onChange={(e) =>
+                    handleEditWorker("Marina", "start", e.target.value)
+                  }
+                />
+              </label>
+              <label>
+                <input
+                  type="time"
+                  value={editWorker.Marina.end}
+                  onChange={(e) =>
+                    handleEditWorker("Marina", "end", e.target.value)
+                  }
+                />
+              </label>
+              <button className={s.saveWorkerBtn} onClick={saveEditedWorker}>
+                Зберегти зміни
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Крістіна працює */}
+        <div className={s.workerColumn}>
+          <h3>Крістіна</h3>
+
+          {!workers.Kristina && editWorker.name !== "Kristina" && (
+            <div className={s.timeInputs}>
+              <div className={s.timeInputsRow}>
+                <label>
+                  <input
+                    type="time"
+                    value={editWorker.Kristina.start}
+                    onChange={(e) =>
+                      handleEditWorker("Kristina", "start", e.target.value)
+                    }
+                  />
+                </label>
+                <label>
+                  <input
+                    type="time"
+                    value={editWorker.Kristina.end}
+                    onChange={(e) =>
+                      handleEditWorker("Kristina", "end", e.target.value)
+                    }
+                  />
+                </label>
+              </div>
+
+              <button
+                className={s.saveWorkerBtn}
+                onClick={() =>
+                  saveWorkerToLocalStorage("Kristina", {
+                    start: editWorker.Kristina.start,
+                    end: editWorker.Kristina.end,
+                  })
+                }
+              >
+                Зберегти
+              </button>
+            </div>
+          )}
+
+          {workers.Kristina && editWorker.name !== "Kristina" && (
+            <div>
+              <p>
+                Крістіна працює з {workers.Kristina.start} до{" "}
+                {workers.Kristina.end}
+              </p>
+              <div className={s.workerActions}>
+                <button
+                  className={s.editWorkerBtn}
+                  onClick={() => startEditWorker("Kristina")}
+                >
+                  Редагувати
+                </button>
+                <button
+                  className={s.deleteWorkerBtn}
+                  onClick={() => removeWorkerFromLocalStorage("Kristina")}
+                >
+                  Видалити
+                </button>
+              </div>
+            </div>
+          )}
+
+          {editWorker.name === "Kristina" && (
+            <div>
+              <label>
+                <input
+                  type="time"
+                  value={editWorker.Kristina.start}
+                  onChange={(e) =>
+                    handleEditWorker("Kristina", "start", e.target.value)
+                  }
+                />
+              </label>
+              <label>
+                <input
+                  type="time"
+                  value={editWorker.Kristina.end}
+                  onChange={(e) =>
+                    handleEditWorker("Kristina", "end", e.target.value)
+                  }
+                />
+              </label>
+              <button className={s.saveWorkerBtn} onClick={saveEditedWorker}>
+                Зберегти зміни
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Перерива */}
       <div className={s.breakContainer}>
         <h3>Перерва:</h3>
         <form className={s.formBreak} onSubmit={handleSetBreak}>
@@ -470,6 +726,7 @@ const DayBookings = () => {
         </form>
       </div>
 
+      {/* Список клиентов */}
       <h3>Список клієнтів на сьогодні:</h3>
       {combinedList.length > 0 ? (
         <ul className={s.bookingList}>
@@ -552,9 +809,7 @@ const DayBookings = () => {
                     )}
                     <button
                       className={s.delBtn}
-                      onClick={() => {
-                        handleDelete(booking.id);
-                      }}
+                      onClick={() => handleDelete(booking.id)}
                     >
                       Видалити
                     </button>
@@ -583,6 +838,7 @@ const DayBookings = () => {
         <p>Записів немає</p>
       )}
 
+      {/* Форма добавления клиента */}
       <form className={s.adminForm} onSubmit={handleSubmit}>
         <label className={s.adminFormLabel}>
           Ім’я та прізвище*:
@@ -664,7 +920,6 @@ const DayBookings = () => {
           Записати
         </button>
       </form>
-
       <button className={s.backAdminBtn} onClick={() => navigate(-1)}>
         Назад
       </button>
