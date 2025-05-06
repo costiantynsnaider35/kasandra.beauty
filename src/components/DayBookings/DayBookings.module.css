@@ -10,8 +10,9 @@
 
 .buttonGroup {
   display: flex;
-  justify-content: center;
-  gap: 10px;
+  align-items: center;
+  justify-content: space-evenly;
+  gap: 5px;
   margin-bottom: 5px;
 }
 .bookingList {
@@ -64,7 +65,7 @@
 }
 
 .buttonAdminWork {
-  padding: 10px 20px;
+  padding: 10px 10px;
   font-size: 16px;
   cursor: pointer;
   border: none;
@@ -320,4 +321,21 @@
 
 .defaultDay {
   color: black;
+}
+.buttonAdminMarina {
+  color: #333;
+}
+
+.buttonAdminMarinaActive {
+  background-color: #ffeb3b;
+  color: #333;
+  font-weight: bold;
+}
+
+.marinaNote {
+  padding: 10px;
+  background-color: #fff9c4;
+  border-left: 4px solid #fbc02d;
+  font-size: 16px;
+  font-weight: 500;
 }

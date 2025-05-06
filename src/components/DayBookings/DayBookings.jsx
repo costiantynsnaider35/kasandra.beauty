@@ -71,6 +71,7 @@ const procedureDurations = {
 const DayBookings = () => {
   const { date } = useParams();
   const navigate = useNavigate();
+
   const [isNonWorking, setIsNonWorking] = useState(false);
   const [bookings, setBookings] = useState([]);
   const [editingTimeId, setEditingTimeId] = useState(null);
@@ -85,6 +86,9 @@ const DayBookings = () => {
   });
   const [breakTime, setBreakTime] = useState({ start: "", end: "" });
   const [breaks, setBreaks] = useState([]);
+
+  const [isMarinaWorking, setIsMarinaWorking] = useState(false); // Новое состояние
+
   const combinedList = [
     ...bookings.map((booking) => ({
       type: "booking",
@@ -129,14 +133,11 @@ const DayBookings = () => {
       try {
         const holidays = await getHolidays();
         setIsNonWorking(holidays.includes(date));
-
         const bookingsData = await getBookingsByDate(date);
-
         const formattedBookings = bookingsData.map((booking) => {
           const procedures = Array.isArray(booking.procedures)
             ? booking.procedures
             : [booking.procedures];
-
           return {
             id: booking.id,
             fullName: booking.fullName,
@@ -147,12 +148,15 @@ const DayBookings = () => {
             comment: booking.comment || "",
           };
         });
-
         setBookings(formattedBookings);
-      } catch {
-        console.error("Error fetching data");
+      } catch (error) {
+        console.error("Error fetching data:", error);
       }
     };
+
+    const savedMarina = localStorage.getItem(`marina-${date}`);
+    setIsMarinaWorking(savedMarina === "true");
+
     fetchData();
   }, [date]);
 
@@ -168,7 +172,6 @@ const DayBookings = () => {
         console.error("Error fetching breaks:", error);
       }
     };
-
     fetchBreaks();
   }, [date]);
 
@@ -202,20 +205,16 @@ const DayBookings = () => {
       toast.error("Невірний формат часу. Введіть час у форматі HH:mm!");
       return;
     }
-
     const selectedTime = dayjs(`${date} ${timeString}`, "YYYY-MM-DD HH:mm");
-
     if (!selectedTime.isValid()) {
       toast.error("Невірний формат часу. Введіть час у форматі HH:mm!");
       return;
     }
-
     const currentTime = dayjs();
     if (selectedTime.isBefore(currentTime, "minute")) {
       toast.error("Час не може бути в минулому!");
       return;
     }
-
     const isTimeBooked = bookings.some(
       (booking) => booking.time === newTime && booking.id !== bookingId
     );
@@ -223,49 +222,41 @@ const DayBookings = () => {
       toast.error("Цей час вже зайнятий! Виберіть інший.");
       return;
     }
-
     const updatedBooking = {
       id: bookingId,
       time: newTime,
     };
-
     try {
       await updateBooking(bookingId, updatedBooking);
-
       setBookings((prevBookings) =>
         prevBookings.map((booking) =>
           booking.id === bookingId ? { ...booking, time: newTime } : booking
         )
       );
-
       setEditingTimeId(null);
       setNewTime("");
     } catch {
-      toast.error;
+      toast.error("Помилка при оновленні запису");
     }
   };
 
   const handleDelete = async (bookingId) => {
     try {
       const bookingIdStr = String(bookingId);
-
       const bookingToDelete = bookings.find(
         (booking) => String(booking.id) === bookingIdStr
       );
       if (!bookingToDelete) {
-        toast.error;
+        toast.error("Запис не знайдено");
         return;
       }
-
       await deleteBooking(bookingIdStr);
-
       setBookings((prevBookings) =>
         prevBookings.filter((booking) => String(booking.id) !== bookingIdStr)
       );
-
-      toast.success;
+      toast.success("Запис видалено");
     } catch (error) {
-      toast.error;
+      toast.error("Помилка при видаленні запису");
       console.error("Delete error:", error);
     }
   };
@@ -280,7 +271,6 @@ const DayBookings = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (
       !formData.fullName ||
       formData.procedures.length === 0 ||
@@ -289,55 +279,43 @@ const DayBookings = () => {
       toast.error("Заповніть всі обов’язкові поля!");
       return;
     }
-
     const timeString = formData.time.trim();
     const timeRegex = /^([01]?[0-9]|2[0-3]):([0-5][0-9])$/;
     if (!timeRegex.test(timeString)) {
       toast.error("Невірний формат часу. Введіть час у форматі HH:mm!");
       return;
     }
-
     const selectedTime = dayjs(`${date} ${timeString}`, "YYYY-MM-DD HH:mm");
-
     if (!selectedTime.isValid()) {
       toast.error("Невірний формат часу. Введіть час у форматі HH:mm!");
       return;
     }
-
     const currentTime = dayjs();
     if (selectedTime.isBefore(currentTime, "minute")) {
       toast.error("Час не може бути в минулому!");
       return;
     }
-
     const isTimeBooked = bookings.some((booking) => {
       const bookingStartTime = dayjs(
         `${date} ${booking.time}`,
         "YYYY-MM-DD HH:mm"
       );
-
       return selectedTime.isSame(bookingStartTime, "minute");
     });
-
     if (isTimeBooked) {
       toast.error("Цей час вже зайнятий! Виберіть інший.");
       return;
     }
-
     const totalDuration = formData.procedures.reduce(
       (acc, { category, procedure }) => {
         return acc + (procedureDurations[category][procedure] || 0);
       },
       0
     );
-
     const newBooking = { ...formData, date, duration: totalDuration };
-
     try {
       const createdBooking = await addBooking(newBooking);
-
       setBookings((prevBookings) => [...prevBookings, createdBooking]);
-
       setFormData({
         fullName: "",
         phoneNumber: "",
@@ -358,7 +336,6 @@ const DayBookings = () => {
         : prevData.procedures.filter(
             (p) => !(p.category === category && p.procedure === procedure)
           );
-
       return { ...prevData, procedures: updatedProcedures };
     });
   };
@@ -370,20 +347,16 @@ const DayBookings = () => {
 
   const handleSetBreak = async (e) => {
     e.preventDefault();
-
     if (!breakTime.start || !breakTime.end) {
       toast.error("Заповніть обидва поля часу для перерви!");
       return;
     }
-
     const startBreak = dayjs(`${date} ${breakTime.start}`, "YYYY-MM-DD HH:mm");
     const endBreak = dayjs(`${date} ${breakTime.end}`, "YYYY-MM-DD HH:mm");
-
     const isConflict = combinedList.some((item) => {
       if (item.type === "booking") {
         const bookingStartTime = item.startTime;
         const bookingEndTime = item.endTime;
-
         return (
           startBreak.isBefore(bookingEndTime, "minute") &&
           endBreak.isAfter(bookingStartTime, "minute")
@@ -391,14 +364,11 @@ const DayBookings = () => {
       }
       return false;
     });
-
     if (isConflict) {
       toast.error("Перерва не може перекриватися з записом!");
       return;
     }
-
     const newBreak = { ...breakTime, date };
-
     try {
       const createdBreak = await addBreak(newBreak);
       setBreaks((prev) => [...prev, createdBreak]);
@@ -433,7 +403,7 @@ const DayBookings = () => {
           }`}
           onClick={handleSetWorkingDay}
         >
-          Робочий день
+          Робочий
         </button>
         <button
           className={`${s.buttonAdminWork} ${
@@ -441,9 +411,26 @@ const DayBookings = () => {
           }`}
           onClick={handleSetNonWorkingDay}
         >
-          Не робочий день
+          Не робочий
+        </button>
+        <button
+          className={`${s.buttonAdminWork} ${
+            isMarinaWorking ? s.buttonAdminMarinaActive : s.buttonAdminMarina
+          }`}
+          onClick={() => {
+            const newValue = !isMarinaWorking;
+            setIsMarinaWorking(newValue);
+            localStorage.setItem(`marina-${date}`, String(newValue));
+          }}
+        >
+          {isMarinaWorking ? "Марина працює " : "Марина не працює"}
         </button>
       </div>
+
+      {isMarinaWorking && (
+        <p className={s.marinaNote}>👩‍⚕️ Сьогодні працює Марина</p>
+      )}
+
       <div className={s.breakContainer}>
         <h3>Перерва:</h3>
         <form className={s.formBreak} onSubmit={handleSetBreak}>
@@ -482,6 +469,7 @@ const DayBookings = () => {
           </div>
         </form>
       </div>
+
       <h3>Список клієнтів на сьогодні:</h3>
       {combinedList.length > 0 ? (
         <ul className={s.bookingList}>
@@ -594,6 +582,7 @@ const DayBookings = () => {
       ) : (
         <p>Записів немає</p>
       )}
+
       <form className={s.adminForm} onSubmit={handleSubmit}>
         <label className={s.adminFormLabel}>
           Ім’я та прізвище*:
@@ -671,11 +660,11 @@ const DayBookings = () => {
             className={s.timeAdminInput}
           />
         </label>
-
         <button type="submit" className={s.addAdminBtn}>
           Записати
         </button>
       </form>
+
       <button className={s.backAdminBtn} onClick={() => navigate(-1)}>
         Назад
       </button>
