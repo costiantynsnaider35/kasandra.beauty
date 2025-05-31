@@ -111,7 +111,7 @@ export const addBooking = async (booking) => {
     }
 
     const bookingsForDate = await getBookingsByDate(booking.date);
-    if (bookingsForDate.length >= 5) {
+    if (bookingsForDate.length >= 10) {
       throw new Error(
         "Вибачте,будь ласка, але на сьогодні вже є максимальна кількість записів до майстра!"
       );
@@ -125,7 +125,6 @@ export const addBooking = async (booking) => {
     const formattedDate = formatDate(new Date());
     const formattedTime = formatTime(new Date().toLocaleTimeString());
 
-    // Отправка уведомления в Telegram
     if (!admin) {
       const message = `${booking.fullName} ${getActionMessage(
         booking.fullName,
@@ -206,7 +205,6 @@ export const updateBooking = async (id, updatedBooking) => {
 
     sendTelegramMessage(message);
 
-    // Обновляем только измененные данные
     await updateDoc(bookingRef, updatedBooking);
 
     if (!admin) {
@@ -337,11 +335,6 @@ export const getMonthlyStats = async () => {
     const bookings = allDocs.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
 
     const now = new Date();
-
-    const parseTime = (timeStr) => {
-      const [hours, minutes] = timeStr.split(":").map(Number);
-      return hours * 60 + minutes;
-    };
 
     const services = [
       {

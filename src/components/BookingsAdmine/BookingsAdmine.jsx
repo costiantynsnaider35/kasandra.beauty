@@ -44,10 +44,9 @@ const BookingsAdmine = ({ setCurrentMonth }) => {
     deleteOldBookings();
   }, []);
 
-  // Обновляем месяц в родительском компоненте
   useEffect(() => {
     const monthKey = `${currentDate.year()}-${currentDate.month() + 1}`;
-    setCurrentMonth(monthKey); // Отправляем текущий месяц родительскому компоненту
+    setCurrentMonth(monthKey);
   }, [currentDate, setCurrentMonth]);
 
   const generateDays = (currentDate) => {

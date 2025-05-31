@@ -72,7 +72,6 @@ const DayBookings = () => {
   const { date } = useParams();
   const navigate = useNavigate();
 
-  // Основные состояния
   const [isNonWorking, setIsNonWorking] = useState(false);
   const [bookings, setBookings] = useState([]);
   const [editingTimeId, setEditingTimeId] = useState(null);
@@ -88,7 +87,6 @@ const DayBookings = () => {
   const [breakTime, setBreakTime] = useState({ start: "", end: "" });
   const [breaks, setBreaks] = useState([]);
 
-  // Состояние для работников
   const [workers, setWorkers] = useState({
     Marina: null,
     Kristina: null,
@@ -100,10 +98,8 @@ const DayBookings = () => {
     Kristina: { start: "", end: "" },
   });
 
-  // Валидация формата времени
   const isValidTime = (time) => /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/.test(time);
 
-  // Объединённый список записей и перерывов
   const combinedList = [
     ...bookings.map((booking) => ({
       type: "booking",
@@ -143,7 +139,6 @@ const DayBookings = () => {
       }),
   ].sort((a, b) => a.startTime - b.startTime);
 
-  // Загрузка данных о праздниках и записях
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -172,7 +167,6 @@ const DayBookings = () => {
     fetchData();
   }, [date]);
 
-  // Загрузка перерив
   useEffect(() => {
     const fetchBreaks = async () => {
       try {
@@ -188,7 +182,6 @@ const DayBookings = () => {
     fetchBreaks();
   }, [date]);
 
-  // Загрузка графика работников из localStorage
   useEffect(() => {
     const savedMarina = localStorage.getItem(`worker-Marina-${date}`);
     const savedKristina = localStorage.getItem(`worker-Kristina-${date}`);
@@ -199,7 +192,6 @@ const DayBookings = () => {
     });
   }, [date]);
 
-  // Функции работы с работниками
   const saveWorkerToLocalStorage = (name, data) => {
     if (!isValidTime(data.start) || !isValidTime(data.end)) {
       toast.error("Введіть коректний час у форматі HH:mm");
@@ -254,7 +246,6 @@ const DayBookings = () => {
     });
   };
 
-  // Установка рабочего / не рабочего дня
   const handleSetWorkingDay = async () => {
     if (isNonWorking) {
       await deleteHoliday(date);
@@ -269,7 +260,6 @@ const DayBookings = () => {
     }
   };
 
-  // Редактирование времени записи
   const handleEditTime = (bookingId, currentTime) => {
     setEditingTimeId(bookingId);
     setNewTime(currentTime);
@@ -321,7 +311,6 @@ const DayBookings = () => {
     }
   };
 
-  // Удаление записи
   const handleDelete = async (bookingId) => {
     try {
       const bookingIdStr = String(bookingId);
@@ -343,7 +332,6 @@ const DayBookings = () => {
     }
   };
 
-  // Форма клиента
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -411,7 +399,6 @@ const DayBookings = () => {
     }
   };
 
-  // Выбор процедур
   const handleCheckboxChange = (category, procedure) => (event) => {
     const isChecked = event.target.checked;
     setFormData((prevData) => {
@@ -424,7 +411,6 @@ const DayBookings = () => {
     });
   };
 
-  // Перерыва
   const handleBreakTimeChange = (e) => {
     const { name, value } = e.target;
     setBreakTime((prev) => ({ ...prev, [name]: value }));
@@ -473,7 +459,6 @@ const DayBookings = () => {
     }
   };
 
-  // День недели
   const dayName = dayjs(date).format("dddd").toLowerCase();
   const isRedDay = ["понеділок", "середа", "п’ятниця"].includes(dayName);
 
@@ -483,7 +468,6 @@ const DayBookings = () => {
         {dayName.toUpperCase()}, {dayjs(date).format("DD.MM.YYYY")}
       </h2>
 
-      {/* Робочий / Не робочий день */}
       <div className={s.buttonGroup}>
         <button
           className={`${s.buttonAdminWork} ${
@@ -503,9 +487,7 @@ const DayBookings = () => {
         </button>
       </div>
 
-      {/* Блоки с работниками */}
       <div className={s.workerTwoColumnContainer}>
-        {/* Марина працює */}
         <div className={s.workerColumn}>
           <h3>Марина</h3>
           {!workers.Marina && editWorker.name !== "Marina" && (
@@ -594,7 +576,6 @@ const DayBookings = () => {
           )}
         </div>
 
-        {/* Крістіна працює */}
         <div className={s.workerColumn}>
           <h3>Крістіна</h3>
 
@@ -686,7 +667,6 @@ const DayBookings = () => {
         </div>
       </div>
 
-      {/* Перерива */}
       <div className={s.breakContainer}>
         <h3>Перерва:</h3>
         <form className={s.formBreak} onSubmit={handleSetBreak}>
@@ -726,7 +706,6 @@ const DayBookings = () => {
         </form>
       </div>
 
-      {/* Список клиентов */}
       <h3>Список клієнтів на сьогодні:</h3>
       {combinedList.length > 0 ? (
         <ul className={s.bookingList}>
@@ -838,7 +817,6 @@ const DayBookings = () => {
         <p>Записів немає</p>
       )}
 
-      {/* Форма добавления клиента */}
       <form className={s.adminForm} onSubmit={handleSubmit}>
         <label className={s.adminFormLabel}>
           Ім’я та прізвище*:
